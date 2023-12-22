@@ -10,7 +10,7 @@ from sqlalchemy import (
     Time,
 )
 from sqlalchemy.dialects.postgresql import BOOLEAN, TIMESTAMP
-from sqlalchemy.orm import Mapped, validates, DeclarativeBase, mapped_column
+from sqlalchemy.orm import Mapped, validates, DeclarativeBase, mapped_column  # type: ignore
 from sqlalchemy.sql import func
 
 
