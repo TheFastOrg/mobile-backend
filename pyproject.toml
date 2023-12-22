@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "mobile-backend"
+version = "0.1.0"
+description = "Fast API Service for ba7besh"
+authors = [
+    "DjObYtE <obaydaba96@gmail.com>",
+    "Hamza Rabah <h.rabah@outlook.com>",
+]
+license = "MIT"
+readme = "README.md"
+# packages = [{ include = "mobile_backend" }]
+
+
+[tool.autopep8]
+max_line_length = 120
+ignore = "E501,W6"
+in-place = true
+recursive = true
+aggressive = 3
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.105.0"
+uvicorn = { extras = ["standard"], version = "^0.25.0" }
+psycopg2-binary = "^2.9.9"
+sqlalchemy = "^2.0.23"
+python-dotenv = "^1.0.0"
+geoalchemy2 = "^0.14.2"
+alembic = "^1.13.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+mypy = "^1.8.0"
+autopep8 = "^2.0.4"
+pre-commit = "^3.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
