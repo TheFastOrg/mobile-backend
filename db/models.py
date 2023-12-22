@@ -1,22 +1,20 @@
+from geoalchemy2 import Geography
 from sqlalchemy import (
+    Boolean,
     Column,
+    DateTime,
+    ForeignKey,
+    Index,
     Integer,
     String,
-    Boolean,
-    DateTime,
-    Index,
-    ForeignKey,
     Time,
 )
+from sqlalchemy.dialects.postgresql import BOOLEAN, TIMESTAMP
+from sqlalchemy.orm import Mapped, validates, DeclarativeBase
 from sqlalchemy.sql import func
-from sqlalchemy.dialects.postgresql import TIMESTAMP, BOOLEAN
-from sqlalchemy.orm import validates
-from geoalchemy2 import Geography
-
-from .engine import Base
 
 
-class BaseModel:
+class Base(DeclarativeBase):
     __abstract__ = True
 
     created_at = Column(
@@ -27,7 +25,7 @@ class BaseModel:
     is_deleted = Column(Boolean, nullable=False, default=False)
 
 
-class Ba7beshBusiness(Base, BaseModel):
+class Ba7beshBusiness(Base):
     __tablename__ = "ba7besh_business"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -64,7 +62,7 @@ ba7besh_business_slug_index = Index(
 )
 
 
-class BusinessWorkingHours(Base, BaseModel):
+class BusinessWorkingHours(Base):
     __tablename__ = "business_working_hours"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -76,7 +74,7 @@ class BusinessWorkingHours(Base, BaseModel):
     closing_time = Column(Time, nullable=False)
 
 
-class BusinessContacts(Base, BaseModel):
+class BusinessContacts(Base):
     __tablename__ = "business_contacts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -87,7 +85,7 @@ class BusinessContacts(Base, BaseModel):
     contact_value = Column(String(255), nullable=False)
 
 
-class Category(Base, BaseModel):
+class Category(Base):
     __tablename__ = "category"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -97,7 +95,7 @@ class Category(Base, BaseModel):
     parent_id = Column(Integer, ForeignKey("category.id", ondelete="SET NULL"))
 
 
-class BusinessCategories(Base, BaseModel):
+class BusinessCategories(Base):
     __tablename__ = "business_categories"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -109,7 +107,7 @@ class BusinessCategories(Base, BaseModel):
     )
 
 
-class Feature(Base, BaseModel):
+class Feature(Base):
     __tablename__ = "feature"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -120,7 +118,7 @@ class Feature(Base, BaseModel):
     en_name = Column(String(255), nullable=False)
 
 
-class BusinessFeatures(Base, BaseModel):
+class BusinessFeatures(Base):
     __tablename__ = "business_features"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -132,7 +130,7 @@ class BusinessFeatures(Base, BaseModel):
     )
 
 
-class BusinessTags(Base, BaseModel):
+class BusinessTags(Base):
     __tablename__ = "business_tags"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -142,7 +140,7 @@ class BusinessTags(Base, BaseModel):
     tag = Column(String(255), nullable=False)
 
 
-class FeaturesCategory(Base, BaseModel):
+class FeaturesCategory(Base):
     __tablename__ = "features_category"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
