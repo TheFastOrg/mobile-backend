@@ -5,15 +5,20 @@ from geoalchemy2.shape import to_shape
 from core.entities.business.business import Business
 from core.entities.business.enums import BusinessType
 from core.entities.business.queries import BusinessListQuery
-from core.entities.business.value_types import BusinessId, MultilingualName, Address, Location
+from core.entities.business.value_types import (
+    BusinessId,
+    MultilingualName,
+    Address,
+    Location,
+)
 from core.interfaces.repositories.business_repository import BusinessRepository
 from db.engine import Session
 from db.models import Ba7beshBusiness
 
 
 class DBBusinessRepository(BusinessRepository):
-    def get_by_id(self, business_id: BusinessId) -> Business:
-        pass
+    # def get_by_id(self, business_id: BusinessId) -> Business:
+    #     pass
 
     def list(self, query: BusinessListQuery) -> List[Business]:
         with Session() as session:

@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+import datetime
 
 from core.entities.business.enums import Day
 

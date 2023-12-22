@@ -29,6 +29,7 @@ python-dotenv = "^1.0.0"
 geoalchemy2 = "^0.14.2"
 alembic = "^1.13.1"
 sqlalchemy2-stubs = "^0.0.2a37"
+types-setuptools = "^69.0.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
