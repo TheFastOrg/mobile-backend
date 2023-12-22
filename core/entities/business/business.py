@@ -1,14 +1,14 @@
 from dataclasses import dataclass, field
-from typing import Optional, List
+from typing import List, Optional
 
 from core.entities.business.enums import BusinessStatus, BusinessType
 from core.entities.business.exceptions import OpeningTimeError, WorkingDayOverlapError
 from core.entities.business.value_types import (
+    Address,
     BusinessId,
-    WorkingDay,
     Location,
     MultilingualName,
-    Address,
+    WorkingDay,
 )
 
 
@@ -60,3 +60,5 @@ class Business:
                     raise WorkingDayOverlapError()
 
         self.working_days.append(working_day)
+
+    __repr__ = __str__ = lambda self: f"Business: {self.names.en_name}"

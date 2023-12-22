@@ -26,7 +26,7 @@ uvicorn = { extras = ["standard"], version = "^0.25.0" }
 psycopg2-binary = "^2.9.9"
 sqlalchemy = { extras = ["mypy"], version = "^2.0.23" }
 python-dotenv = "^1.0.0"
-geoalchemy2 = "^0.14.2"
+geoalchemy2 = {extras = ["shapely"], version = "^0.14.2"}
 alembic = "^1.13.1"
 
 [tool.poetry.group.dev.dependencies]

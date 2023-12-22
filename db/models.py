@@ -1,16 +1,10 @@
+from typing import List
+
 from geoalchemy2 import Geography
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Index,
-    Integer,
-    String,
-    Time,
-)
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Time
 from sqlalchemy.dialects.postgresql import BOOLEAN, TIMESTAMP
-from sqlalchemy.orm import Mapped, validates, DeclarativeBase, mapped_column  # type: ignore
+from sqlalchemy.orm import Mapped  # type: ignore
+from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship, validates
 from sqlalchemy.sql import func
 
 
@@ -25,14 +19,13 @@ class Base(DeclarativeBase):
     is_deleted = mapped_column(Boolean, nullable=False, default=False)
 
 
-class Ba7beshBusiness(Base):
-    __tablename__ = "ba7besh_business"
+class Business(Base):
+    __tablename__ = "business"
 
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     location = mapped_column(
         Geography(geometry_type="POINT", srid=4326), nullable=False
     )
-    updated_at = mapped_column(TIMESTAMP(timezone=True))
     address_line1: Mapped[str] = mapped_column(String(255))
     address_line2: Mapped[str] = mapped_column(String(255))
     ar_name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -42,6 +35,9 @@ class Ba7beshBusiness(Base):
     slug = mapped_column(String(255), nullable=False, unique=True)
     status = mapped_column(String(255), nullable=False)
     type = mapped_column(String(255), nullable=False)
+    business_working_hours: Mapped[List["BusinessWorkingHours"]] = relationship(
+        "BusinessWorkingHours", back_populates="business"
+    )
 
     # Validation example (you can add more validation as needed)
     @validates("status", "type")
@@ -52,15 +48,15 @@ class Ba7beshBusiness(Base):
         return value
 
     def __repr__(self):
-        return f"object: Ba7beshBusiness  id: {self.id}, name: {self.en_name}"
+        return f"Business: {self.en_name}"
 
 
 # Index creation
 ba7besh_business_location_index = Index(
-    "ba7besh_business_location_fc3ec09e_id", Ba7beshBusiness.location
+    "ba7besh_business_location_fc3ec09e_id", Business.location
 )
 ba7besh_business_slug_index = Index(
-    "ba7besh_business_slug_ce0fd4e6_like", Ba7beshBusiness.slug
+    "ba7besh_business_slug_ce0fd4e6_like", Business.slug
 )
 
 
@@ -74,6 +70,9 @@ class BusinessWorkingHours(Base):
     day = mapped_column(Integer, nullable=False)  # Starting from 1 = Monday
     opening_time = mapped_column(Time, nullable=False)
     closing_time = mapped_column(Time, nullable=False)
+    business: Mapped["Business"] = relationship(
+        "Business", back_populates="business_working_hours"
+    )
 
 
 class BusinessContacts(Base):

@@ -12,8 +12,8 @@ class BusinessService:
     def __init__(self, business_repository: BusinessRepository):
         self.business_repository = business_repository
 
-    def list(self, query: BusinessListQuery) -> List[Business]:
-        return self.business_repository.list(query)
+    def list_all(self, query: BusinessListQuery) -> List[Business]:
+        return self.business_repository.list_all(query)
 
     def get_by_id(self, business_id: BusinessId) -> Business:
         return self.business_repository.get_by_id(business_id)

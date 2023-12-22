@@ -11,12 +11,12 @@ class Day(Enum):
     SUNDAY = auto()
 
 
-class BusinessStatus(Enum):
-    DRAFT = auto()
-    VERIFIED = auto()
-    CLAIMED = auto()
-    DISCONTINUED = auto()
+class BusinessStatus(str, Enum):
+    DRAFT = "draft"
+    VERIFIED = "verified"
+    CLAIMED = "claimed"
+    DISCONTINUED = "discontinued"
 
 
 class BusinessType(Enum):
-    RESTAURANT = auto()
+    RESTAURANT = "restaurant"
