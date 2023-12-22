@@ -10,7 +10,7 @@ from sqlalchemy import (
     Time,
 )
 from sqlalchemy.dialects.postgresql import BOOLEAN, TIMESTAMP
-from sqlalchemy.orm import Mapped, validates, DeclarativeBase
+from sqlalchemy.orm import Mapped, validates, DeclarativeBase, mapped_column
 from sqlalchemy.sql import func
 
 
@@ -31,11 +31,11 @@ class Ba7beshBusiness(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     location = Column(Geography(geometry_type="POINT", srid=4326), nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True))
-    address_line1 = Column(String(255))
-    address_line2 = Column(String(255))
+    address_line1: Mapped[str] = mapped_column(String(255))
+    address_line2: Mapped[str] = mapped_column(String(255))
     ar_name = Column(String(255), nullable=False)
-    city = Column(String(255))
-    country = Column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255))
+    country: Mapped[str] = mapped_column(String(255), nullable=False)
     en_name = Column(String(255), nullable=False)
     slug = Column(String(255), nullable=False, unique=True)
     status = Column(String(255), nullable=False)
