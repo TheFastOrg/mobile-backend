@@ -8,7 +8,7 @@ from core.entities.business.value_types import BusinessId
 
 class BusinessRepository(ABC):
     @abstractmethod
-    def list(self, query: BusinessListQuery) -> List[Business]:
+    def list_all(self, query: BusinessListQuery) -> List[Business]:
         raise NotImplementedError
 
     @abstractmethod

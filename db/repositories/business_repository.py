@@ -20,13 +20,13 @@ class DBBusinessRepository(BusinessRepository):
     # def get_by_id(self, business_id: BusinessId) -> Business:
     #     pass
 
-    def list(self, query: BusinessListQuery) -> List[Business]:
+    def list_all(self, query: BusinessListQuery) -> List[Business]:
         with Session() as session:
             results = session.query(Ba7beshBusiness).limit(10).all()
-            return []
+            return [self.from_db_to_business(item) for item in results]
 
     @staticmethod
-    def from_db_to_business(db_business: Ba7beshBusiness) -> Business:  # ignore
+    def from_db_to_business(db_business: Ba7beshBusiness) -> Business:
         point = to_shape(db_business.location)
         return Business(
             business_id=BusinessId("db_business.id"),
