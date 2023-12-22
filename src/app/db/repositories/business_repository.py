@@ -2,7 +2,6 @@ from contextlib import AbstractContextManager
 from typing import Callable, Iterator
 
 from geoalchemy2.shape import to_shape
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from src.app.db.models import Business as DBBusiness
