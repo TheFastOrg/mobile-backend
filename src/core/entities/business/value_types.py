@@ -1,8 +1,8 @@
+import datetime
 import uuid
 from dataclasses import dataclass, field
-import datetime
 
-from core.entities.business.enums import Day
+from src.core.entities.business.enums import Day
 
 
 @dataclass(frozen=True)

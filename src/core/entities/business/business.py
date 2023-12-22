@@ -1,9 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
-from core.entities.business.enums import BusinessStatus, BusinessType
-from core.entities.business.exceptions import OpeningTimeError, WorkingDayOverlapError
-from core.entities.business.value_types import (
+from src.core.entities.business.enums import BusinessStatus, BusinessType
+from src.core.entities.business.exceptions import (
+    OpeningTimeError,
+    WorkingDayOverlapError,
+)
+from src.core.entities.business.value_types import (
     Address,
     BusinessId,
     Location,

@@ -1,29 +1,35 @@
-from typing import List
+from contextlib import AbstractContextManager
+from typing import Callable, Iterator
 
 from geoalchemy2.shape import to_shape
 from sqlalchemy import or_
+from sqlalchemy.orm import Session
 
-from core.entities.business.business import Business as Business
-from core.entities.business.enums import BusinessType
-from core.entities.business.queries import BusinessListQuery
-from core.entities.business.value_types import (
+from src.app.db.models import Business as DBBusiness
+from src.app.db.models import BusinessWorkingHours
+from src.core.entities.business.business import Business as Business
+from src.core.entities.business.enums import BusinessType
+from src.core.entities.business.queries import BusinessListQuery
+from src.core.entities.business.value_types import (
     Address,
     BusinessId,
     Location,
     MultilingualName,
 )
-from core.interfaces.repositories.business_repository import BusinessRepository
-from db.engine import Session
-from db.models import Business as DBBusiness
-from db.models import BusinessWorkingHours
+from src.core.interfaces.repositories.business_repository import BusinessRepository
 
 
 class DBBusinessRepository(BusinessRepository):
+    def __init__(
+        self, session_factory: Callable[..., AbstractContextManager[Session]]
+    ) -> None:
+        self.session_factory = session_factory
+
     def get_by_id(self, business_id: BusinessId) -> Business:
         pass
 
-    def list_all(self, query: BusinessListQuery) -> List[Business]:
-        with Session() as session:
+    def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
+        with self.session_factory() as session:
             db_query = session.query(DBBusiness)
             if query.status:
                 db_query = db_query.filter(DBBusiness.status == query.status)

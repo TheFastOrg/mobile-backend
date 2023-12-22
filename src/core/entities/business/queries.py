@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import time
 from typing import Optional
 
-from core.entities.business.enums import BusinessStatus, Day
+from src.core.entities.business.enums import BusinessStatus, Day
 
 
 @dataclass
