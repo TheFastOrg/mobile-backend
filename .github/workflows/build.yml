@@ -28,8 +28,8 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Install dependencies
-        run: poetry install --with dev
+      - name: Install dev dependencies
+        run: poetry install --dev
     
       - name: Import Order Check with isort
         if: always()
@@ -72,8 +72,8 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Install dependencies
-        run: poetry install --with dev
+      - name: Install dev dependencies
+        run: poetry install --dev
     
       - name: Lint - ruff
         id: lint
@@ -103,8 +103,8 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Install dependencies
-        run: poetry install --with dev
+      - name: Install dev dependencies
+        run: poetry install --dev
 
       - name: Type Check - mypy
         run: |
