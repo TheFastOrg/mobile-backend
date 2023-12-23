@@ -34,8 +34,8 @@ jobs:
       - name: Import Order Check with isort
         if: always()
         run: |
-            poetry run isort --check-only --diff --verbose ./src/app
-            poetry run isort --check-only --diff --verbose ./src/core
+            poetry run isort . --check-only --diff --verbose
+            
 
       - name: autopep8 core
         id: autopep8-core
