@@ -34,15 +34,9 @@ jobs:
       - name: Import Order Check with isort
         if: always()
         run: |
-            isort --check-only --diff --verbose ./src/app
-            isort --check-only --diff --verbose ./src/core
+            poetry run isort --check-only --diff --verbose ./src/app
+            poetry run isort --check-only --diff --verbose ./src/core
 
-      - name: Format Check with Black
-        uses: psf/black@744d23b34800c06e10272149b70752396e90eeb8 # pin@stable
-        if: always()
-        with:
-          options: "--check --diff --verbose"
-          summary: false
       - name: autopep8 core
         id: autopep8-core
         uses: peter-evans/autopep8@v2
