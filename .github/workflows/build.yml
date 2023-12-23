@@ -79,6 +79,7 @@ jobs:
         id: lint
         if: always()
         run: |
+            poetry shell
             ruff ./src/app/ 
             ruff ./src/core/ 
 
