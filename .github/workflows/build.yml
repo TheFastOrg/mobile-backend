@@ -79,9 +79,9 @@ jobs:
         id: lint
         if: always()
         run: |
-            poetry shell
-            ruff ./src/app/ 
-            ruff ./src/core/ 
+            
+            poetry run ruff ./src/app/ 
+            poetry run ruff ./src/core/ 
 
 
 #   check-utils-types:
