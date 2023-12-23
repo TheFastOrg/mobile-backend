@@ -3,7 +3,8 @@ from typing import Iterator
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
 from src.core.entities.business.value_types import BusinessId
-from src.core.interfaces.repositories.business_repository import BusinessRepository
+from src.core.interfaces.repositories.business_repository import \
+    BusinessRepository
 
 
 class BusinessService:

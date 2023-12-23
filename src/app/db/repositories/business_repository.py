@@ -9,13 +9,10 @@ from src.app.db.models import BusinessWorkingHours
 from src.core.entities.business.business import Business as Business
 from src.core.entities.business.enums import BusinessType
 from src.core.entities.business.queries import BusinessListQuery
-from src.core.entities.business.value_types import (
-    Address,
-    BusinessId,
-    Location,
-    MultilingualName,
-)
-from src.core.interfaces.repositories.business_repository import BusinessRepository
+from src.core.entities.business.value_types import (Address, BusinessId,
+                                                    Location, MultilingualName)
+from src.core.interfaces.repositories.business_repository import \
+    BusinessRepository
 
 
 class DBBusinessRepository(BusinessRepository):

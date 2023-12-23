@@ -1,9 +1,11 @@
 from typing import List
 
 from geoalchemy2 import Geography
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Time
+from sqlalchemy import (Boolean, DateTime, ForeignKey, Index, Integer, String,
+                        Time)
 from sqlalchemy.orm import Mapped  # type: ignore
-from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship, validates
+from sqlalchemy.orm import (DeclarativeBase, mapped_column, relationship,
+                            validates)
 from sqlalchemy.sql import func
 
 
