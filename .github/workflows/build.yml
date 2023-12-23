@@ -7,46 +7,53 @@ on:
     pull_request:
         types: [opened, synchronize]
   
-
 jobs:
+  format-check:
+    name: "Format Check"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
-#   format-check:
-#     name: "Format Check"
-#     runs-on: ubuntu-22.04
-#     timeout-minutes: 15
-#     steps:
-#       - name: Checkout Source Code
-#         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4
-#         with:
-#           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-#       - name: Set up Python
-#         uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4
-#         with:
-#           python-version: "3.10"
-#           cache: "pip"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
 
-#       - name: Install
-#         run: pip install -r requirements_dev.txt
+      - name: Install dependencies
+        run: poetry install --with dev
     
+      - name: Import Order Check with isort
+        if: always()
+        run: |
+            isort --check-only --diff --verbose ./src/app
+            isort --check-only --diff --verbose ./src/core
 
-#       # The official isort action does not provide any output in the success case
-#       # - name: Import order check - isort
-#       #   uses: isort/isort-action@v1
-#       #   if: always()
-#       #   with:
-#       #     configuration: "--check-only --diff --verbose"
+      - name: Format Check with Black
+        uses: psf/black@744d23b34800c06e10272149b70752396e90eeb8 # pin@stable
+        if: always()
+        with:
+          options: "--check --diff --verbose"
+          summary: false
+      - name: autopep8 core
+        id: autopep8-core
+        uses: peter-evans/autopep8@v2
+        with:
+          args: ./src/core --recursive --in-place
 
-#       - name: Import Order Check with isort
-#         if: always()
-#         run: isort --check-only --diff --verbose .
-
-#       - name: Format Check with Black
-#         uses: psf/black@744d23b34800c06e10272149b70752396e90eeb8 # pin@stable
-#         if: always()
-#         with:
-#           options: "--check --diff --verbose"
-#           summary: false
+      - name: autopep8 ape
+        id: autopep8-app
+        uses: peter-evans/autopep8@v2
+        with:
+          args: ./src/app --recursive --in-place
 
   check-lint:
     name: "Check Linting"
@@ -74,36 +81,38 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
     
-
       - name: Lint - ruff
         id: lint
         if: always()
         run: |
-            
             poetry run ruff ./src/app/ 
             poetry run ruff ./src/core/ 
 
+  check-utils-types:
+    name: "Check Utils Types"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
 
-#   check-utils-types:
-#     name: "Check Utils Types"
-#     runs-on: ubuntu-22.04
-#     timeout-minutes: 15
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
-#     steps:
-#       - name: Checkout Source Code
-#         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4
-#         with:
-#           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Set up Python
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-#       - name: Set up Python
-#         uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4
-#         with:
-#           python-version: "3.10"
-#           cache: "pip"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
 
-#       - name: Install
-#         run: pip install -r requirements_dev.txt -r template/requirements.txt
+      - name: Install dependencies
+        run: poetry install --with dev
 
-#       - name: Type Check - mypy
-#         run: |
-#           mypy ./
+      - name: Type Check - mypy
+        run: |
+          poetry run mypy ./src/app
+          poetry run mypy ./src/core
