@@ -8,7 +8,8 @@ from fastapi import APIRouter, Depends, Response, status
 from src.core.entities.business.queries import BusinessListQuery
 from src.core.services.business_service import BusinessService
 
-from .containers import Container
+from src.app.containers import Container
+from src.core.entities.business.enums import Day, BusinessStatus
 
 router = APIRouter()
 
@@ -19,8 +20,8 @@ async def search(
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
     query = BusinessListQuery(
-        day_filter=1,
-        status="draft",
+        day_filter=Day.MONDAY,
+        status=BusinessStatus.DRAFT,
         min_opening_time=time(10, 0, 0),
         max_closing_time=time(23, 59, 59),
         page_size=10,

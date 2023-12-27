@@ -25,7 +25,7 @@ class Business:
         cls,
         names: MultilingualName,
         location: Location,
-        type: BusinessType,
+        type: BusinessType = BusinessType.RESTAURANT,
         address: Optional[Address] = None,
     ) -> "Business":
         business_id = BusinessId.generate()
@@ -58,4 +58,5 @@ class Business:
 
         self.working_days.append(working_day)
 
-    __repr__ = __str__ = lambda self: f"Business: {self.names.en_name}"
+    def __repr__(self):
+        return f"Business: {self.names.en_name}"

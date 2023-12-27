@@ -12,5 +12,5 @@ class BusinessRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, business_id: BusinessId) -> Business:
+    def get_by_id(self, business_id: BusinessId) -> Business | None:
         raise NotImplementedError

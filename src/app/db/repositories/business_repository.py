@@ -21,8 +21,8 @@ class DBBusinessRepository(BusinessRepository):
     ) -> None:
         self.session_factory = session_factory
 
-    def get_by_id(self, business_id: BusinessId) -> Business:
-        pass
+    def get_by_id(self, business_id: BusinessId) -> Business | None:
+        return None
 
     def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
         with self.session_factory() as session:
@@ -54,7 +54,7 @@ class DBBusinessRepository(BusinessRepository):
 
             results = db_query.all()
 
-            return [self.from_db_to_business(item) for item in results]
+            return iter([self.from_db_to_business(item) for item in results])
 
     @staticmethod
     def from_db_to_business(db_business: DBBusiness) -> Business:
@@ -69,5 +69,4 @@ class DBBusinessRepository(BusinessRepository):
                 db_business.address_line2,
             ),
             location=Location(point.y, point.x),
-            type=BusinessType.RESTAURANT,
         )

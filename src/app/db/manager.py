@@ -2,11 +2,12 @@
 import logging
 from contextlib import AbstractContextManager, contextmanager
 from typing import Callable
+from collections.abc import Iterator
 
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import Session
 
-from .models import Base
+from src.app.db.models import Base
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class Database:
         Base.metadata.create_all(self._engine)
 
     @contextmanager
-    def session(self) -> Callable[..., AbstractContextManager[Session]]:
+    def session(self) -> Iterator[AbstractContextManager[Session]]:
         session: Session = self._session_factory()
         try:
             yield session
