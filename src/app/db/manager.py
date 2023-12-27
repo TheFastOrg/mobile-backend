@@ -1,8 +1,7 @@
 """Database module."""
 import logging
-from contextlib import AbstractContextManager, contextmanager
-from typing import Callable
 from collections.abc import Iterator
+from contextlib import AbstractContextManager, contextmanager
 
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import Session

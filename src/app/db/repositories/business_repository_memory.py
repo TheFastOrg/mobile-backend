@@ -2,8 +2,10 @@ from typing import Dict, Iterator
 
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
-from src.core.entities.business.value_types import BusinessId, MultilingualName, Location
-from src.core.interfaces.repositories.business_repository import BusinessRepository
+from src.core.entities.business.value_types import (BusinessId, Location,
+                                                    MultilingualName)
+from src.core.interfaces.repositories.business_repository import \
+    BusinessRepository
 
 
 class InMemoryBusinessRepository(BusinessRepository):

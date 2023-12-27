@@ -5,9 +5,9 @@ from dependency_injector import containers, providers
 
 from src.app.db.manager import Database
 from src.app.db.repositories.business_repository import DBBusinessRepository
-from src.app.db.repositories.business_repository_memory import InMemoryBusinessRepository
+from src.app.db.repositories.business_repository_memory import \
+    InMemoryBusinessRepository
 from src.core.services.business_service import BusinessService
-
 
 USE_INMEMORY_DB = os.environ.get("USE_INMEMORY_DB", False)
 
