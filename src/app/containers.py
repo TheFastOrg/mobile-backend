@@ -5,26 +5,35 @@ from dependency_injector import containers, providers
 
 from src.app.db.manager import Database
 from src.app.db.repositories.business_repository import DBBusinessRepository
+from src.app.db.repositories.business_repository_memory import InMemoryBusinessRepository
 from src.core.services.business_service import BusinessService
 
-DB_HOST = os.environ["POSTGRES_HOST"]
-DB_NAME = os.environ["POSTGRES_DATABASE"]
-DB_USER = os.environ["POSTGRES_USERNAME"]
-DB_PASSWORD = os.environ["POSTGRES_PASSWORD"]
+
+USE_INMEMORY_DB = os.environ.get("USE_INMEMORY_DB", False)
 
 
-class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(modules=["src.app.endpoints"])
-    config = providers.Configuration(yaml_files=["config.yml"])
-    db_url = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+def _get_business_repository():
+    if USE_INMEMORY_DB:
+        return InMemoryBusinessRepository()
+    db_host = os.environ.get("POSTGRES_HOST", None)
+    db_name = os.environ["POSTGRES_DATABASE"]
+    db_user = os.environ["POSTGRES_USERNAME"]
+    db_password = os.environ["POSTGRES_PASSWORD"]
+    db_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
     db = providers.Singleton(Database, db_url=db_url)
 
     business_repository = providers.Factory(
         DBBusinessRepository,
         session_factory=db.provided.session,
     )
+    return business_repository
+
+
+class Container(containers.DeclarativeContainer):
+    wiring_config = containers.WiringConfiguration(modules=["src.app.endpoints"])
+    config = providers.Configuration(yaml_files=["config.yml"])
 
     business_service = providers.Factory(
         BusinessService,
-        business_repository=business_repository,
+        business_repository=_get_business_repository(),
     )
