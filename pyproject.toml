@@ -21,10 +21,10 @@ aggressive = 3
 [tool.mypy]
 warn_return_any = true
 warn_unused_configs = true
-exclude = ['.venv','src/alembic']
+exclude = ['.venv', 'src/alembic']
 
 [tool.ruff]
-exclude = ['.venv','src/alembic']
+exclude = ['.venv', 'src/alembic']
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -33,7 +33,7 @@ uvicorn = { extras = ["standard"], version = "^0.25.0" }
 psycopg2-binary = "^2.9.9"
 sqlalchemy = { extras = ["mypy"], version = "^2.0.23" }
 python-dotenv = "^1.0.0"
-geoalchemy2 = {extras = ["shapely"], version = "^0.14.2"}
+geoalchemy2 = { extras = ["shapely"], version = "^0.14.2" }
 alembic = "^1.13.1"
 dependency-injector = "^4.41.0"
 
@@ -48,3 +48,11 @@ isort = "^5.13.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.apply.tasks]
+script = "alembic upgrade head"
+
+[tool.migration.tasks]
+script = "alembic revision --autogenerate -m message"
+args = ["message"]

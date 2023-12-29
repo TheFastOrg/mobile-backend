@@ -1,11 +1,18 @@
 from typing import List
 
 from geoalchemy2 import Geography
-from sqlalchemy import (Boolean, DateTime, ForeignKey, Index, Integer, String,
-                        Time)
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Time,
+    CheckConstraint,
+)
 from sqlalchemy.orm import Mapped  # type: ignore
-from sqlalchemy.orm import (DeclarativeBase, mapped_column, relationship,
-                            validates)
+from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship
 from sqlalchemy.sql import func
 
 
@@ -23,54 +30,44 @@ class Base(DeclarativeBase):
 class Business(Base):
     __tablename__ = "business"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    location = mapped_column(
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    location: Mapped[Geography] = mapped_column(
         Geography(geometry_type="POINT", srid=4326), nullable=False
     )
-    address_line1: Mapped[str] = mapped_column(String(255))
-    address_line2: Mapped[str] = mapped_column(String(255))
-    ar_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    city: Mapped[str] = mapped_column(String(255))
-    country: Mapped[str] = mapped_column(String(255), nullable=False)
-    en_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    slug = mapped_column(String(255), nullable=False, unique=True)
-    status = mapped_column(String(255), nullable=False)
-    type = mapped_column(String(255), nullable=False)
+    address_line1: Mapped[String] = mapped_column(String(255))
+    address_line2: Mapped[String] = mapped_column(String(255))
+    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    city: Mapped[String] = mapped_column(String(255))
+    country: Mapped[String] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    slug: Mapped[String] = mapped_column(String(255), unique=True, nullable=False)
+    status: Mapped[String] = mapped_column(String(255), nullable=False)
+    type: Mapped[String] = mapped_column(String(255), nullable=False)
+
     business_working_hours: Mapped[List["BusinessWorkingHours"]] = relationship(
         "BusinessWorkingHours", back_populates="business"
     )
-
-    # Validation example (you can add more validation as needed)
-    @validates("status", "type")
-    def validate_status_type(self, key, value):
-        # Example: Ensure that 'status' and 'type' are not empty
-        if not value or not value.strip():
-            raise ValueError(f"{key} cannot be empty")
-        return value
 
     def __repr__(self):
         return f"Business: {self.en_name}"
 
 
-# Index creation
-ba7besh_business_location_index = Index(
-    "ba7besh_business_location_fc3ec09e_id", Business.location
-)
-ba7besh_business_slug_index = Index(
-    "ba7besh_business_slug_ce0fd4e6_like", Business.slug
-)
-
-
 class BusinessWorkingHours(Base):
     __tablename__ = "business_working_hours"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    business_id = mapped_column(
-        Integer, ForeignKey("business.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    day: Mapped[Integer] = mapped_column(
+        Integer,
+        CheckConstraint("day >= 1 AND day <= 7"),
+        nullable=False,
     )
-    day = mapped_column(Integer, nullable=False)  # Starting from 1 = Monday
-    opening_time = mapped_column(Time, nullable=False)
-    closing_time = mapped_column(Time, nullable=False)
+    opening_time: Mapped[Time] = mapped_column(Time, nullable=False)
+    closing_time: Mapped[Time] = mapped_column(Time, nullable=False)
+    business_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
+    )
     business: Mapped["Business"] = relationship(
         "Business", back_populates="business_working_hours"
     )
@@ -79,72 +76,122 @@ class BusinessWorkingHours(Base):
 class BusinessContacts(Base):
     __tablename__ = "business_contacts"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    business_id = mapped_column(
-        Integer, ForeignKey("business.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    contact_type: Mapped[String] = mapped_column(String(15), nullable=False)
+    contact_value: Mapped[String] = mapped_column(String(255), nullable=False)
+    business_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
-    contact_type = mapped_column(String(15), nullable=False)
-    contact_value = mapped_column(String(255), nullable=False)
+
+    business: Mapped["Business"] = relationship(
+        "Business", back_populates="business_contacts"
+    )
 
 
 class Category(Base):
     __tablename__ = "category"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
     slug = mapped_column(String(255), unique=True, nullable=False)
-    ar_name = mapped_column(String(255))
-    en_name = mapped_column(String(255))
-    parent_id = mapped_column(Integer, ForeignKey("category.id", ondelete="SET NULL"))
+    ar_name: Mapped[String] = mapped_column(String(255))
+    en_name: Mapped[String] = mapped_column(String(255))
+    parent_id: Mapped[Integer] = mapped_column(
+        Integer, ForeignKey("category.id"), nullable=True
+    )
 
 
 class BusinessCategories(Base):
     __tablename__ = "business_categories"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    business_id = mapped_column(
-        Integer, ForeignKey("business.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    business_id: Mapped[Integer] = mapped_column(
+        ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
-    category_id = mapped_column(
-        Integer, ForeignKey("category.id", ondelete="PROTECT"), nullable=False
+    category_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("category.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
+
+    business: Mapped["Business"] = relationship(
+        "Business", back_populates="business_categories"
+    )
+    # category: Mapped["mapped_column.mapped_class"] = mapped_column(
+    #     mapped_column.class_of_type("Category")
+    # )
 
 
 class Feature(Base):
     __tablename__ = "feature"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    category_id = mapped_column(
-        Integer, ForeignKey("category.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    category_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("category.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
-    ar_name = mapped_column(String(255), nullable=False)
-    en_name = mapped_column(String(255), nullable=False)
 
 
 class BusinessFeatures(Base):
     __tablename__ = "business_features"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    business_id = mapped_column(
-        Integer, ForeignKey("business.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    business_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
-    feature_id = mapped_column(
-        Integer, ForeignKey("feature.id", ondelete="PROTECT"), nullable=False
+    feature_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("feature.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
+
+    # business: Mapped["mapped_column.mapped_class"] = mapped_column(
+    #     mapped_column.class_of_type("Business")
+    # )
+    # feature: Mapped["mapped_column.mapped_class"] = mapped_column(
+    #     mapped_column.class_of_type("Feature")
+    # )
 
 
 class BusinessTags(Base):
     __tablename__ = "business_tags"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    business_id = mapped_column(
-        Integer, ForeignKey("business.id", ondelete="CASCADE"), nullable=False
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    tag: Mapped[String] = mapped_column(String(255), nullable=False)
+    business_id: Mapped[Integer] = mapped_column(
+        Integer,
+        ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
+        nullable=False,
     )
-    tag = mapped_column(String(255), nullable=False)
+
+    # business: Mapped["mapped_column.mapped_class"] = mapped_column(
+    #     mapped_column.class_of_type("Business")
+    # )
 
 
 class FeaturesCategory(Base):
     __tablename__ = "features_category"
 
-    id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    ar_name = mapped_column(String(255), nullable=False)
-    en_name = mapped_column(String(255), nullable=False)
+    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
+
+
+Index(
+    "business_working_hours_business_id_day_index",
+    BusinessWorkingHours.business_id,
+    BusinessWorkingHours.day,
+)
+Index("business_tags_business_id_index", BusinessTags.business_id)
+Index("business_features_business_id_index", BusinessFeatures.business_id)
+Index("business_features_feature_id_index", BusinessFeatures.feature_id)
+Index("business_contacts_business_id_index", BusinessContacts.business_id)
+Index("business_categories_business_id_index", BusinessCategories.business_id)
+Index("business_categories_category_id_index", BusinessCategories.category_id)
