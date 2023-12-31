@@ -34,15 +34,15 @@ class Business(Base):
     location: Mapped[Geography] = mapped_column(
         Geography(geometry_type="POINT", srid=4326), nullable=False
     )
-    address_line1: Mapped[String] = mapped_column(String(255))
-    address_line2: Mapped[String] = mapped_column(String(255))
-    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
-    city: Mapped[String] = mapped_column(String(255))
-    country: Mapped[String] = mapped_column(String(255), nullable=False)
-    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
-    slug: Mapped[String] = mapped_column(String(255), unique=True, nullable=False)
-    status: Mapped[String] = mapped_column(String(255), nullable=False)
-    type: Mapped[String] = mapped_column(String(255), nullable=False)
+    address_line1: Mapped[str] = mapped_column(String(255))
+    address_line2: Mapped[str] = mapped_column(String(255))
+    ar_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    city: Mapped[str] = mapped_column(String(255))
+    country: Mapped[str] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    slug: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    status: Mapped[str] = mapped_column(String(255), nullable=False)
+    type: Mapped[str] = mapped_column(String(255), nullable=False)
 
     business_working_hours: Mapped[List["BusinessWorkingHours"]] = relationship(
         "BusinessWorkingHours", back_populates="business"
@@ -77,8 +77,8 @@ class BusinessContacts(Base):
     __tablename__ = "business_contacts"
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    contact_type: Mapped[String] = mapped_column(String(15), nullable=False)
-    contact_value: Mapped[String] = mapped_column(String(255), nullable=False)
+    contact_type: Mapped[str] = mapped_column(String(15), nullable=False)
+    contact_value: Mapped[str] = mapped_column(String(255), nullable=False)
     business_id: Mapped[Integer] = mapped_column(
         Integer,
         ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
@@ -95,8 +95,8 @@ class Category(Base):
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
     slug = mapped_column(String(255), unique=True, nullable=False)
-    ar_name: Mapped[String] = mapped_column(String(255))
-    en_name: Mapped[String] = mapped_column(String(255))
+    ar_name: Mapped[str] = mapped_column(String(255))
+    en_name: Mapped[str] = mapped_column(String(255))
     parent_id: Mapped[Integer] = mapped_column(
         Integer, ForeignKey("category.id"), nullable=True
     )
@@ -128,8 +128,8 @@ class Feature(Base):
     __tablename__ = "feature"
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
-    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    ar_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[str] = mapped_column(String(255), nullable=False)
     category_id: Mapped[Integer] = mapped_column(
         Integer,
         ForeignKey("category.id", deferrable=True, initially="DEFERRED"),
@@ -164,7 +164,7 @@ class BusinessTags(Base):
     __tablename__ = "business_tags"
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    tag: Mapped[String] = mapped_column(String(255), nullable=False)
+    tag: Mapped[str] = mapped_column(String(255), nullable=False)
     business_id: Mapped[Integer] = mapped_column(
         Integer,
         ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
@@ -180,8 +180,8 @@ class FeaturesCategory(Base):
     __tablename__ = "features_category"
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    ar_name: Mapped[String] = mapped_column(String(255), nullable=False)
-    en_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    ar_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    en_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
 
 Index(

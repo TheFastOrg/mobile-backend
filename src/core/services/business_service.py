@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Optional
 
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
@@ -15,5 +15,5 @@ class BusinessService:
     def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
         return self.business_repository.get_all(query)
 
-    def get_by_id(self, business_id: BusinessId) -> Business:
+    def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return self.business_repository.get_by_id(business_id)

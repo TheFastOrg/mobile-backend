@@ -68,7 +68,6 @@ poetry_command = ""
 [tool.poe.tasks]
 doc = "poetry run poe"
 dev = "poetry run uvicorn src.app.main:app --reload"
-lint = "poetry run ruff src tests --fix"
 test = "poetry run pytest tests -vv"
 apply-migration = "poetry run alembic upgrade head"
 empty-migration = "poetry run alembic revision"
@@ -77,13 +76,19 @@ rm -rf ./**/*.pyc
        ./**/__pycache__
 """
 
+[tool.poe.tasks.lint]
+    [[tool.poe.tasks.lint.sequence]]
+    cmd = "poetry run ruff src tests"
+    [[tool.poe.tasks.lint.sequence]]
+    cmd = "poetry run mypy src tests"
+
 [tool.poe.tasks.format]
-    [[tool.poe.tasks.format.sequence]]
-    cmd = "poetry run isort src tests"
     [[tool.poe.tasks.format.sequence]]
     cmd = "poetry run autopep8 src tests"
     [[tool.poe.tasks.format.sequence]]
     cmd = "poetry run ruff format src tests"
+    [[tool.poe.tasks.format.sequence]]
+    cmd = "poetry run isort src tests"
 
 
 

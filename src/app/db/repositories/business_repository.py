@@ -1,5 +1,5 @@
 from contextlib import AbstractContextManager
-from typing import Callable, Iterator
+from typing import Callable, Iterator, Optional
 
 from geoalchemy2.shape import to_shape
 from sqlalchemy.orm import Session
@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from src.app.db.models import Business as DBBusiness
 from src.app.db.models import BusinessWorkingHours
 from src.core.entities.business.business import Business as Business
+from src.core.entities.business.enums import BusinessType
 from src.core.entities.business.queries import BusinessListQuery
 from src.core.entities.business.value_types import (
     Address,
@@ -23,7 +24,7 @@ class DBBusinessRepository(BusinessRepository):
     ) -> None:
         self.session_factory = session_factory
 
-    def get_by_id(self, business_id: BusinessId) -> Business | None:
+    def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return None
 
     def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
@@ -60,7 +61,7 @@ class DBBusinessRepository(BusinessRepository):
 
     @staticmethod
     def from_db_to_business(db_business: DBBusiness) -> Business:
-        point = to_shape(db_business.location)
+        point = to_shape(db_business.location)  # type: ignore
         return Business(
             business_id=BusinessId(""),
             names=MultilingualName(db_business.ar_name, db_business.en_name),
@@ -71,4 +72,5 @@ class DBBusinessRepository(BusinessRepository):
                 db_business.address_line2,
             ),
             location=Location(point.y, point.x),
+            type=BusinessType.RESTAURANT,
         )

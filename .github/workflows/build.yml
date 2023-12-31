@@ -6,7 +6,7 @@ on:
         tags: [v*]
     pull_request:
         types: [opened, synchronize]
-  
+
 jobs:
   format-check:
     name: "Format Check"
@@ -30,24 +30,11 @@ jobs:
 
       - name: Install dev dependencies
         run: poetry install --only dev
-    
-      - name: Import Order Check with isort
+
+      - name: Run format command
         if: always()
         run: |
-            poetry run isort . --check-only --diff --verbose
-            
-
-      - name: autopep8 core
-        id: autopep8-core
-        uses: peter-evans/autopep8@v2
-        with:
-          args: ./src/core --recursive --in-place
-
-      - name: autopep8 ape
-        id: autopep8-app
-        uses: peter-evans/autopep8@v2
-        with:
-          args: ./src/app --recursive --in-place
+            poetry format
 
   check-lint:
     name: "Check Linting"
@@ -74,13 +61,13 @@ jobs:
 
       - name: Install dev dependencies
         run: poetry install --only dev
-    
+
       - name: Lint - ruff
         id: lint
         if: always()
         run: |
-            poetry run ruff ./src/app/ 
-            poetry run ruff ./src/core/ 
+            poetry run ruff src
+            poetry run ruff tests
 
   check-utils-types:
     name: "Check Utils Types"
@@ -108,5 +95,4 @@ jobs:
 
       - name: Type Check - mypy
         run: |
-          poetry run mypy ./src/app
-          poetry run mypy ./src/core
+          poetry lint

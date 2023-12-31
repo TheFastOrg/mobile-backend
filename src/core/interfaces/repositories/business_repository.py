@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterator
+from typing import Iterator, Optional
 
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
@@ -12,5 +12,5 @@ class BusinessRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, business_id: BusinessId) -> Business | None:
+    def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         raise NotImplementedError
