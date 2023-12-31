@@ -30,7 +30,6 @@ mypy = "^1.8.0"
 autopep8 = "^2.0.4"
 pre-commit = "^3.6.0"
 ruff = "^0.1.9"
-isort = "^5.13.2"
 poethepoet = "^0.24.4"
 
 [build-system]
@@ -87,8 +86,6 @@ rm -rf ./**/*.pyc
     cmd = "poetry run autopep8 src tests"
     [[tool.poe.tasks.format.sequence]]
     cmd = "poetry run ruff format src tests"
-    [[tool.poe.tasks.format.sequence]]
-    cmd = "poetry run isort src tests"
 
 
 
