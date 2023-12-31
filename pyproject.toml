@@ -8,23 +8,9 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-# packages = [{ include = "mobile_backend" }]
+packages = [{include = "src"}, {include = "tests"}]
 
 
-[tool.autopep8]
-max_line_length = 120
-ignore = "E501,W6"
-in-place = true
-recursive = true
-aggressive = 3
-
-[tool.mypy]
-warn_return_any = true
-warn_unused_configs = true
-exclude = ['.venv', 'src/alembic']
-
-[tool.ruff]
-exclude = ['.venv', 'src/alembic']
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -44,15 +30,61 @@ autopep8 = "^2.0.4"
 pre-commit = "^3.6.0"
 ruff = "^0.1.9"
 isort = "^5.13.2"
+poethepoet = "^0.24.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.apply.tasks]
-script = "alembic upgrade head"
+# tools configurations
+[tool.autopep8]
+max_line_length = 120
+ignore = "E501,W6"
+in-place = true
+recursive = true
+aggressive = 3
 
-[tool.migration.tasks]
-script = "alembic revision --autogenerate -m message"
-args = ["message"]
+[tool.mypy]
+warn_return_any = true
+warn_unused_configs = true
+exclude = ['.venv', 'src/alembic']
+
+[tool.ruff]
+exclude = ['.venv', 'src/alembic']
+
+# Setup custom commands
+[tool.poe]
+poetry_command = ""
+
+
+[tool.poe.tasks.setup]
+    [[tool.poe.tasks.setup.sequence]]
+    cmd = "poetry install"
+    [[tool.poe.tasks.setup.sequence]]
+    cmd = "poetry run pre-commit install"
+
+[tool.poe.tasks]
+doc = "poetry run poe"
+dev = "poetry run uvicorn src.app.main:app --reload"
+lint = "poetry run ruff"
+test = "poetry run pytest tests -vv"
+apply-migration = "poetry run alembic upgrade head"
+empty-migration = "poetry run alembic revision"
+clean = """
+rm -rf ./**/*.pyc
+       ./**/__pycache__
+"""
+
+[tool.poe.tasks.format]
+    [[tool.poe.tasks.format.sequence]]
+    cmd = "poetry run isort src tests"
+    [[tool.poe.tasks.format.sequence]]
+    cmd = "poetry run autopep8 src tests"
+
+
+
+[tool.poe.tasks.generate-migration]
+cmd= "poetry run alembic revision --autogenerate"
+help= "Generate migration script based on comparison of database to model"
+args = [{ name = "message", options = ["-m", "--message"], help = "Message string to use for the migration file" }]
