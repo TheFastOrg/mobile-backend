@@ -1,15 +1,16 @@
 """add_models
 
 Revision ID: e8af61ec28f5
-Revises: 
+Revises:
 Create Date: 2023-12-29 19:00:53.126469
 
 """
 from typing import Sequence, Union
 
-from alembic import op
-import sqlalchemy as sa
 import geoalchemy2
+import sqlalchemy as sa
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "e8af61ec28f5"

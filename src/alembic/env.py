@@ -1,8 +1,11 @@
 import os
+import sys
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
+import src.app.db.models as models
 from alembic import context
 
 DB_HOST = os.environ["POSTGRES_HOST"]
@@ -12,10 +15,6 @@ DB_PASSWORD = os.environ["POSTGRES_PASSWORD"]
 
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
-import os
-import sys
-
-from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
@@ -38,7 +37,6 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-import src.app.db.models as models
 
 target_metadata = models.Base.metadata
 

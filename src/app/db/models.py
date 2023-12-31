@@ -3,13 +3,13 @@ from typing import List
 from geoalchemy2 import Geography
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
     Integer,
     String,
     Time,
-    CheckConstraint,
 )
 from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import DeclarativeBase, mapped_column, relationship

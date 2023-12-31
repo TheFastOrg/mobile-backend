@@ -10,10 +10,10 @@ from src.core.entities.business.enums import BusinessStatus, Day
 from src.core.entities.business.queries import BusinessListQuery
 from src.core.services.business_service import BusinessService
 
-router = APIRouter()
+businessRouter = APIRouter(prefix="/v1/businesses", tags=["Business"])
 
 
-@router.post("/search")
+@businessRouter.post("/search")
 @inject
 async def search(
     service: BusinessService = Depends(Provide[Container.business_service]),

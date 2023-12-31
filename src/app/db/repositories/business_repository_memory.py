@@ -2,10 +2,12 @@ from typing import Dict, Iterator
 
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
-from src.core.entities.business.value_types import (BusinessId, Location,
-                                                    MultilingualName)
-from src.core.interfaces.repositories.business_repository import \
-    BusinessRepository
+from src.core.entities.business.value_types import (
+    BusinessId,
+    Location,
+    MultilingualName,
+)
+from src.core.interfaces.repositories.business_repository import BusinessRepository
 
 
 class InMemoryBusinessRepository(BusinessRepository):
@@ -13,9 +15,13 @@ class InMemoryBusinessRepository(BusinessRepository):
 
     def __init__(self):
         self._data = {}  # Store businesses in a dictionary
-        self.save(Business.create(
-            names=MultilingualName(en_name="co-worker restaurant", ar_name="مطعم كووركر"),
-            location=Location(33.507780, 36.285530))
+        self.save(
+            Business.create(
+                names=MultilingualName(
+                    en_name="co-worker restaurant", ar_name="مطعم كووركر"
+                ),
+                location=Location(33.507780, 36.285530),
+            )
         )
 
     def save(self, business: Business) -> Business:
