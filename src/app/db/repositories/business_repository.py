@@ -4,8 +4,8 @@ from typing import Callable, Iterator, Optional
 from geoalchemy2.shape import to_shape
 from sqlalchemy.orm import Session
 
-from src.app.db.models import Business as DBBusiness
-from src.app.db.models import BusinessWorkingHours
+from src.app.db.models.business import Business as DBBusiness
+from src.app.db.models.business_working_hours import BusinessWorkingHours
 from src.core.entities.business.business import Business as Business
 from src.core.entities.business.enums import BusinessType
 from src.core.entities.business.queries import BusinessListQuery
