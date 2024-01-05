@@ -229,4 +229,4 @@ fabric.properties
 
 .ruff_cache
 
-.envrc.local
+.envrc.*
