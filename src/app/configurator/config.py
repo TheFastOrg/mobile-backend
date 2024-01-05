@@ -15,12 +15,12 @@ class Settings(BaseSettings):
     API_TITLE: str = "Ba7besh API"
     API_VERSION: str = "1.0"
     USE_IN_MEMORY_DB: bool = True
-    POSTGRES_USERNAME: str = os.getenv("POSTGRES_USERNAME", "postgres")
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: Optional[str] = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DATABASE: str = os.getenv("POSTGRES_DATABASE", "ba7besh")
-    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DATABASE}"
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ba7besh")
+    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 
 def _configure_initial_settings() -> Callable[[], Settings]:
