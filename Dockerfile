@@ -16,6 +16,8 @@ COPY alembic.ini poetry.lock  /app/
 
 COPY tests/  /app/tests/
 
+COPY seed/  /app/scripts/seed/
+
 RUN chmod -R +x /app/scripts/
 
 ENTRYPOINT ["/app/scripts/docker-start.sh"]
