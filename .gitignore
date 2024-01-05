@@ -231,3 +231,5 @@ fabric.properties
 
 .envrc.*
 seed/
+
+.metals/
