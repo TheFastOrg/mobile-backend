@@ -2,16 +2,20 @@ FROM python:3.11
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock /app/
+COPY pyproject.toml poetry.lock  /app/
 
 RUN pip install poetry && poetry install --no-root
 
-COPY ./src /app/src
-
 RUN apt-get update && apt-get install -y postgresql-client
 
-COPY wait-for-postgres.sh /wait-for-postgres.sh
+COPY ./src /app/src
 
-RUN chmod +x /wait-for-postgres.sh
+COPY scripts/ /app/scripts/
 
-ENTRYPOINT ["/wait-for-postgres.sh", "postgres", "poetry", "run", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+COPY alembic.ini poetry.lock  /app/
+
+COPY tests/  /app/tests/
+
+RUN chmod -R +x /app/scripts/
+
+ENTRYPOINT ["/app/scripts/docker-start.sh"]
