@@ -9,7 +9,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     ENV: str = "dev"
     API_DESCRIPTION: str = (
-        "Ba7besh Back-End API for the mobile app, it will be used privately by the ba7besh mobile "
+        "Ba7besh Back-End API for the mobile app,"
+        + "it will be used privately by the ba7besh mobile "
         "app"
     )
     API_TITLE: str = "Ba7besh API"
