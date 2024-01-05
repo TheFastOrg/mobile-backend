@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from geoalchemy2 import Geography
 from sqlalchemy import (
@@ -28,7 +28,9 @@ class Business(Base):
     status: Mapped[str] = mapped_column(String(255), nullable=False)
     type: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    business_working_hours: Mapped[List["BusinessWorkingHours"]] = relationship(
+    # using Any to avoid circular import
+    # (alternative: move `BusinessWorkingHours` to `Business.py`)
+    business_working_hours: Mapped[List[Any]] = relationship(
         "BusinessWorkingHours", back_populates="business"
     )
 
