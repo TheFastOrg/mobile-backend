@@ -46,8 +46,6 @@ target_metadata = models.Base.metadata
 
 
 def include_object(object, name, type_, reflected, compare_to):
-    print(object)
-    print(name, type_)
     if type_ == "table" and object.schema in ["public"]:
         return True
 
