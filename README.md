@@ -11,3 +11,7 @@
 ### Available commands:
 You can run the doc command to see all available commands
 `poetry doc`
+
+
+### FAST API:
+- swagger UI endpoint: `/docs`

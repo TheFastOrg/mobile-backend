@@ -1,4 +1,4 @@
-from typing import Dict, Iterator
+from typing import Dict, Iterator, Optional
 
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessListQuery
@@ -30,7 +30,7 @@ class InMemoryBusinessRepository(BusinessRepository):
         self._data[business.business_id] = business
         return business
 
-    def get_by_id(self, business_id: BusinessId) -> Business | None:
+    def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return self._data.get(business_id)
 
     def get_all(self, query: BusinessListQuery) -> Iterator[Business]:

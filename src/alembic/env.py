@@ -5,15 +5,11 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-import src.app.db.models as models
+from src.app.db.models.base import Base
+from src.app.configurator.config import get_settings
 from alembic import context
 
-DB_HOST = os.environ["POSTGRES_HOST"]
-DB_NAME = os.environ["POSTGRES_DATABASE"]
-DB_USER = os.environ["POSTGRES_USERNAME"]
-DB_PASSWORD = os.environ["POSTGRES_PASSWORD"]
-
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+settings = get_settings()
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +20,7 @@ sys.path.append(BASE_DIR)
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -38,7 +34,7 @@ if config.config_file_name is not None:
 # target_metadata = None
 
 
-target_metadata = models.Base.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -47,8 +43,6 @@ target_metadata = models.Base.metadata
 
 
 def include_object(object, name, type_, reflected, compare_to):
-    print(object)
-    print(name, type_)
     if type_ == "table" and object.schema in ["public"]:
         return True
 

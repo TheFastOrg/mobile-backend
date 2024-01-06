@@ -7,30 +7,31 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    ENV: str = "dev"
+    APP_ENV: str = "dev"
     API_DESCRIPTION: str = (
-        "Ba7besh Back-End API for the mobile app, it will be used privately by the ba7besh mobile "
+        "Ba7besh Back-End API for the mobile app,"
+        + "it will be used privately by the ba7besh mobile "
         "app"
     )
     API_TITLE: str = "Ba7besh API"
     API_VERSION: str = "1.0"
-    USE_IN_MEMORY_DB: bool = False
-    POSTGRES_USERNAME: str = os.getenv("POSTGRES_USERNAME", "postgres")
+    USE_IN_MEMORY_DB: bool = True
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: Optional[str] = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DATABASE: str = os.getenv("POSTGRES_DATABASE", "ba7besh")
-    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DATABASE}"
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ba7besh")
+    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+    @staticmethod
+    def _configure_initial_settings() -> Callable[[], "Settings"]:
+        load_dotenv()
+        settings = Settings()
+
+        def fn() -> Settings:
+            return settings
+
+        return fn
 
 
-def _configure_initial_settings() -> Callable[[], Settings]:
-    load_dotenv()
-    settings = Settings()
-
-    def fn() -> Settings:
-        return settings
-
-    return fn
-
-
-get_settings = _configure_initial_settings()
+get_settings = Settings._configure_initial_settings()
