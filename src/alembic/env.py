@@ -6,13 +6,10 @@ from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from src.app.db.models.base import Base
+from src.app.configurator.config import get_settings
 from alembic import context
 
-DB_HOST = os.environ["POSTGRES_HOST"]
-DB_NAME = os.environ["POSTGRES_DB"]
-DB_USER = os.environ["POSTGRES_USER"]
-DB_PASSWORD = os.environ["POSTGRES_PASSWORD"]
-DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+settings = get_settings()
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +20,7 @@ sys.path.append(BASE_DIR)
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
