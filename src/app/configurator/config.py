@@ -23,15 +23,15 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ba7besh")
     DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
+    @staticmethod
+    def _configure_initial_settings() -> Callable[[], "Settings"]:
+        load_dotenv()
+        settings = Settings()
 
-def _configure_initial_settings() -> Callable[[], Settings]:
-    load_dotenv()
-    settings = Settings()
+        def fn() -> Settings:
+            return settings
 
-    def fn() -> Settings:
-        return settings
-
-    return fn
+        return fn
 
 
-get_settings = _configure_initial_settings()
+get_settings = Settings._configure_initial_settings()
