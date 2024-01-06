@@ -1,4 +1,3 @@
-
 from sqlalchemy import (
     Integer,
     String,
@@ -6,7 +5,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import mapped_column
 
-from src.app.db.models import Base
+from src.app.db.models.base import Base
 
 
 class FeaturesCategory(Base):

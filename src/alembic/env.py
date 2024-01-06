@@ -5,7 +5,7 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
-import src.app.db.models as models
+from src.app.db.models.base import Base
 from alembic import context
 
 DB_HOST = os.environ["POSTGRES_HOST"]
@@ -37,7 +37,7 @@ if config.config_file_name is not None:
 # target_metadata = None
 
 
-target_metadata = models.Base.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

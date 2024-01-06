@@ -6,7 +6,7 @@ from contextlib import AbstractContextManager, contextmanager
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import Session
 
-from src.app.db.models import Base
+from src.app.db.models.base import Base
 
 logger = logging.getLogger(__name__)
 
