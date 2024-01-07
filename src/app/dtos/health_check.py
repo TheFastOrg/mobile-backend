@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from src.app.dtos.base_dto import BaseDTO
 
 
-class HealthCheckModel(BaseModel):
+class HealthCheckModel(BaseDTO):
     title: str = Field(..., description="API title")
     description: str = Field(..., description="Brief description of the API")
     version: str = Field(..., description="API version number")

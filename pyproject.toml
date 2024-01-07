@@ -23,6 +23,7 @@ geoalchemy2 = { extras = ["shapely"], version = "^0.14.2" }
 alembic = "^1.13.1"
 dependency-injector = "^4.41.0"
 pydantic-settings = "^2.1.0"
+pyhumps = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
