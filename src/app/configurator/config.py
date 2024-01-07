@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Optional
+from typing import Callable, Optional, Literal
 
 from dotenv import load_dotenv
 from pydantic import PostgresDsn
@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_ENV: str = "dev"
+    APP_ENV: Literal["dev", "staging", "prod"] = "dev"
     API_DESCRIPTION: str = (
         "Ba7besh Back-End API for the mobile app,"
         + "it will be used privately by the ba7besh mobile "

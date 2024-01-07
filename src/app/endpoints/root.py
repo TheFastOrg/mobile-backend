@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Response
+from fastapi import APIRouter, status
 
 from src.app.configurator.config import get_settings
 from src.app.dtos.health_check import HealthCheckModel
@@ -16,13 +16,9 @@ rootRouter = APIRouter()
 )
 def health_check():
     settings = get_settings()
-    return Response(
-        content=HealthCheckModel(
-            title=settings.API_TITLE,
-            description=settings.API_DESCRIPTION,
-            version=settings.API_VERSION,
-            status="OK",
-        ).model_dump_json(),
-        media_type="application/json",
-        status_code=status.HTTP_200_OK,
+    return HealthCheckModel(
+        title=settings.API_TITLE,
+        description=settings.API_DESCRIPTION,
+        version=settings.API_VERSION,
+        status="OK",
     )
