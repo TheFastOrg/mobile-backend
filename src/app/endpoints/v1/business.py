@@ -5,7 +5,7 @@ from datetime import time
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Response, status
 
-from src.app.containers import Container
+from src.app.configurator.containers import Container
 from src.core.entities.business.enums import BusinessStatus, Day
 from src.core.entities.business.queries import BusinessListQuery
 from src.core.services.business_service import BusinessService

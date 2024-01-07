@@ -42,3 +42,6 @@ class BusinessId:
     @classmethod
     def generate(cls) -> "BusinessId":
         return cls()
+
+    def __repr__(self):
+        return self.value
