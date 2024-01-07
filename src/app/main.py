@@ -20,6 +20,7 @@ def create_app() -> FastAPI:
         title=settings.API_TITLE,
         version=settings.API_VERSION,
         openapi_tags=[{"name": "Business"}],
+        openapi_url=None if settings.APP_ENV == "prod" else "/openapi.json",
     )
     fast_api_app.add_middleware(GZipMiddleware)
     if settings.APP_ENV == "prod":
