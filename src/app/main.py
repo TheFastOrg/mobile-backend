@@ -4,7 +4,7 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from src.app.configurator.config import get_settings
-from src.app.containers import Container
+from src.app.configurator.containers import Container
 from src.app.endpoints.root import rootRouter
 from src.app.endpoints.v1.business import businessRouter
 from fastapi.middleware.gzip import GZipMiddleware

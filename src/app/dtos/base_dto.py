@@ -7,10 +7,6 @@ from humps import camelize
 from pydantic import BaseModel, ConfigDict, model_validator
 
 
-def to_camel(string):
-    return camelize(string)
-
-
 def convert_datetime_to_gmt(dt: datetime) -> str:
     if not dt.tzinfo:
         dt = dt.replace(tzinfo=ZoneInfo("UTC"))
@@ -22,7 +18,7 @@ class BaseDTO(BaseModel):
     model_config = ConfigDict(
         json_encoders={datetime: convert_datetime_to_gmt},
         populate_by_name=True,
-        alias_generator=to_camel,
+        alias_generator=camelize,
     )
 
     @model_validator(mode="before")

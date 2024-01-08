@@ -24,9 +24,11 @@ alembic = "^1.13.1"
 dependency-injector = "^4.41.0"
 pydantic-settings = "^2.1.0"
 pyhumps = "^3.8.0"
+httpx = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
+pytestarch = "^1.5.1"
 mypy = "^1.8.0"
 autopep8 = "^2.0.4"
 pre-commit = "^3.6.0"
@@ -50,6 +52,15 @@ aggressive = 3
 warn_return_any = true
 warn_unused_configs = true
 exclude = ['.venv', 'src/alembic']
+
+[[tool.mypy.overrides]]
+module = "pytestarch.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    'ignore:The `__fields__` attribute is deprecated',
+]
 
 [tool.ruff]
 exclude = ['.venv', 'src/alembic']
