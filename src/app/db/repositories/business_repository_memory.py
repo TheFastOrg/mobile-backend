@@ -1,7 +1,7 @@
 from typing import Dict, Iterator, Optional
 
 from src.core.entities.business.business import Business
-from src.core.entities.business.queries import BusinessListQuery
+from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
     BusinessId,
     Location,
@@ -33,6 +33,6 @@ class InMemoryBusinessRepository(BusinessRepository):
     def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return self._data.get(business_id)
 
-    def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
+    def get_all(self, query: BusinessSearchQuery) -> Iterator[Business]:
         for business in self._data.values():
             yield business

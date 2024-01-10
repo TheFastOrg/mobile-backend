@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
+import pydantic
 from pydantic import Field
 
 from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
@@ -10,7 +11,7 @@ from src.core.entities.business.enums import BusinessType
 class LocationRequest(BaseDTO):
     latitude: float = Field(...)
     longitude: float = Field(...)
-    radiusInMeter: float = Field(..., description="Radius in meter")
+    radiusInKM: float = Field(..., description="Radius in KM")
 
 
 class SearchBusinessSortOptions(Enum):
@@ -20,13 +21,25 @@ class SearchBusinessSortOptions(Enum):
 
 class SearchBusinessRequest(BasePaginationRequest):
     type: BusinessType = Field(default=BusinessType.RESTAURANT)
-    name: str = Field(...)
-    categoryName: str = Field(...)
+    name: Optional[str] = Field(default=None)
+    categoryName: Optional[str] = Field(default=None)
     categories: Optional[List[str]] = Field(
         default=None, description="List of category ids"
     )
-    tags: List[str] = Field(..., description="List of tags")
-    features: List[str] = Field(..., description="List of feature ids")
-    location: LocationRequest = Field(...)
-    openedNow: bool = Field(...)
-    sortBy: SearchBusinessSortOptions = Field(...)
+    tags: Optional[List[str]] = Field(default=None, description="List of tags")
+    features: Optional[List[str]] = Field(
+        default=None, description="List of feature ids"
+    )
+    location: Optional[LocationRequest] = Field(default=None)
+    openedNow: Optional[bool] = Field(default=None)
+    sortBy: SearchBusinessSortOptions = Field(
+        default=SearchBusinessSortOptions.DISTANCE
+    )
+
+    @pydantic.field_validator(*fields)
+    def validate_name_or_category_name_should_be_present(cls, values):
+        print(values)
+        return values
+        # if values["name"] is None and values["categoryName"] is None:
+        #     raise ValueError("Name or categoryName should be present")
+        # return values
