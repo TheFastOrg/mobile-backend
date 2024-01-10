@@ -1,12 +1,11 @@
+import datetime
 from contextlib import AbstractContextManager
 from typing import Callable, Iterator, Optional
-
 from geoalchemy2.shape import to_shape
 from sqlalchemy.orm import Session
-
 from src.app.db.models.business import Business as DBBusiness
 from src.core.entities.business.business import Business as Business
-from src.core.entities.business.enums import BusinessType
+from src.core.entities.business.enums import BusinessType, Day
 from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
     Address,
@@ -33,8 +32,21 @@ class DBBusinessRepository(BusinessRepository):
                 db_query = db_query.filter(DBBusiness.type == query.type)
 
             if query.name:
-                db_query = db_query.filter(DBBusiness.en_name == query.name)
+                if query.language == "ar":
+                    db_query = db_query.filter(DBBusiness.ar_name == query.name)
+                else:
+                    db_query = db_query.filter(DBBusiness.en_name == query.name)
 
+            if query.openedNow:
+                today = datetime.datetime.now()
+                day = Day(today.isoweekday())
+                now = today.now().time()
+                #TODO obay, plase check this in the real db
+                db_query = db_query.filter(
+                        DBBusiness.business_working_hours.any(
+                            day=day, opening_time__gte=now, closing_time__lte=now
+                        )
+                    )
             # if query.categoryName:
             #     db_query = db_query.filter(
             #         DBBusiness.categories.any(=query.day_filter)
