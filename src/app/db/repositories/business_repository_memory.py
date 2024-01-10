@@ -23,6 +23,14 @@ class InMemoryBusinessRepository(BusinessRepository):
                 location=Location(33.507780, 36.285530),
             )
         )
+        self.save(
+            Business.create(
+                names=MultilingualName(
+                    en_name="co-worker restaurant2", ar_name="مطعم كووركر2"
+                ),
+                location=Location(33.507780, 36.285530),
+            )
+        )
 
     def save(self, business: Business) -> Business:
         if not business.business_id:

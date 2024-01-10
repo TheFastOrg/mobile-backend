@@ -19,9 +19,6 @@ async def search(
     query: SearchBusinessRequest,
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
-    coreQuery = BusinessMapper.to_core_query(query)
-    business = service.get_all(coreQuery)
-    print("Database connectivity test successful:", business)
-    return Response(
-        content="Hey, ba7besh started here!", status_code=status.HTTP_200_OK
-    )
+    core_query = BusinessMapper.to_core_query(query)
+    business = service.get_all(core_query)
+    return business
