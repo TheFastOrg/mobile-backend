@@ -6,8 +6,9 @@ from fastapi import APIRouter, Depends, Response, status
 
 from src.app.configurator.containers import Container
 from src.app.dtos.business import SearchBusinessRequest
-from src.core.entities.business.queries import BusinessSearchQuery
+from src.core.entities.business.enums import BusinessStatus, Day
 from src.core.services.business_service import BusinessService
+from src.app.mappers.business import BusinessMapper
 
 businessRouter = APIRouter(prefix="/v1/businesses", tags=["Business"])
 
@@ -18,17 +19,9 @@ async def search(
     query: SearchBusinessRequest,
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
-    # coreQuery = BusinessListQuery(
-    #     day_filter=Day.MONDAY,
-    #     status=BusinessStatus.DRAFT,
-    #     min_opening_time=time(10, 0, 0),
-    #     max_closing_time=time(23, 59, 59),
-    #     page_size=10,
-    #     page_number=2,
-    # )
-    coreQuery = BusinessSearchQuery()
+    coreQuery = BusinessMapper.to_core_query(query)
     business = service.get_all(coreQuery)
-    print("Database connectivity test successful:", list(business))
+    print("Database connectivity test successful:", business)
     return Response(
         content="Hey, ba7besh started here!", status_code=status.HTTP_200_OK
     )
