@@ -29,8 +29,16 @@ class DBBusinessRepository(BusinessRepository):
     def get_all(self, query: BusinessSearchQuery) -> Iterator[Business]:
         with self.session_factory() as session:
             db_query = session.query(DBBusiness)
-            # if query.status:
-            #     db_query = db_query.filter(DBBusiness.status == query.status)
+            if query.type:
+                db_query = db_query.filter(DBBusiness.type == query.type)
+
+            if query.name:
+                db_query = db_query.filter(DBBusiness.en_name == query.name)
+
+            # if query.categoryName:
+            #     db_query = db_query.filter(
+            #         DBBusiness.categories.any(=query.day_filter)
+            #     )
             # if query.day_filter:
             #     db_query = db_query.filter(
             #         DBBusiness.business_working_hours.any(day=query.day_filter)

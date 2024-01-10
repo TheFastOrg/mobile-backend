@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Literal
 from pydantic import BaseModel, Field
 
 from src.core.entities.business.enums import BusinessType
@@ -20,3 +20,4 @@ class BusinessSearchQuery(BaseModel):
     # sortBy: SearchBusinessSortOptions = Field(...)
     page_size: int = 100
     page_number: int = 1
+    language: Literal["en", "ar"] = "en"

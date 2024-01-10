@@ -33,6 +33,9 @@ class Business(Base):
     business_working_hours: Mapped[List[Any]] = relationship(
         "BusinessWorkingHours", back_populates="business"
     )
+    categories: Mapped[List[Any]] = relationship(
+        "BusinessCategory", back_populates="business"
+    )
 
     def __repr__(self):
         return f"Business: {self.en_name}"
