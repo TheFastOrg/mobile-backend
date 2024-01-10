@@ -3,24 +3,8 @@ from typing import List, Optional
 
 from pydantic import Field
 
-from src.app.dtos.base_dto import BaseDTO
+from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
 from src.core.entities.business.enums import BusinessType
-
-"""
-{
-type: BusinessTypeEnum,
-name: string,
-categoryName: string,
-categories: array of categoryId,
-tags: array of string,
-features: array of featureId,
-location: {latitude: floating number, longitude: floating number, radiusInMeter: optional +real number},
-openedNow: boolean,
-sortBy: SortByOptions (see below),
-pageSize: (default 100),
-pageNumber: (default 1)
-}
-"""
 
 
 class LocationRequest(BaseDTO):
@@ -34,7 +18,7 @@ class SearchBusinessSortOptions(Enum):
     DISTANCE = "distance"
 
 
-class SearchBusinessRequest(BaseDTO):
+class SearchBusinessRequest(BasePaginationRequest):
     type: BusinessType = Field(default=BusinessType.RESTAURANT)
     name: str = Field(...)
     categoryName: str = Field(...)
