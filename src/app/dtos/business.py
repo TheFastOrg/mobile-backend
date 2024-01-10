@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import pydantic
 from pydantic import Field
@@ -36,10 +36,8 @@ class SearchBusinessRequest(BasePaginationRequest):
         default=SearchBusinessSortOptions.DISTANCE
     )
 
-    @pydantic.field_validator(*fields)
-    def validate_name_or_category_name_should_be_present(cls, values):
-        print(values)
+    @pydantic.model_validator(mode="before")
+    def validate_name_or_category_name_should_be_present(cls, values: Dict):
+        if values.get("name") is None and values.get("categoryName") is None:
+            raise ValueError("Name or categoryName should be present")
         return values
-        # if values["name"] is None and values["categoryName"] is None:
-        #     raise ValueError("Name or categoryName should be present")
-        # return values
