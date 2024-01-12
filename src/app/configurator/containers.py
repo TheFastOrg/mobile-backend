@@ -16,7 +16,7 @@ settings = get_settings()
 def _get_business_repository():
     if settings.USE_IN_MEMORY_DB:
         return providers.Factory(InMemoryBusinessRepository)
-    db = providers.Singleton(Database, db_url=settings.DATABASE_URL)
+    db = providers.ThreadSafeSingleton(Database, db_url=settings.DATABASE_URL)
 
     business_repository = providers.Factory(
         DBBusinessRepository,

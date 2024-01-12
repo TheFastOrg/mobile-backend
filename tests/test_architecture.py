@@ -40,9 +40,9 @@ class TestArchitecture:
         )
 
     def test_core_layer_should_not_access_any_layer(
-            self,
-            architecture: BaseLayeredArchitecture,
-            pytestarch_architecture: EvaluableArchitecture,
+        self,
+        architecture: BaseLayeredArchitecture,
+        pytestarch_architecture: EvaluableArchitecture,
     ):
         rule = (
             LayerRule()
@@ -55,9 +55,9 @@ class TestArchitecture:
         rule.assert_applies(pytestarch_architecture)
 
     def test_api_layer_should_access_core_layer(
-            self,
-            architecture: BaseLayeredArchitecture,
-            pytestarch_architecture: EvaluableArchitecture,
+        self,
+        architecture: BaseLayeredArchitecture,
+        pytestarch_architecture: EvaluableArchitecture,
     ):
         rule = (
             LayerRule()
@@ -71,9 +71,9 @@ class TestArchitecture:
         rule.assert_applies(pytestarch_architecture)
 
     def test_api_layer_should_not_accessed_by_any_layer(
-            self,
-            architecture: BaseLayeredArchitecture,
-            pytestarch_architecture: EvaluableArchitecture,
+        self,
+        architecture: BaseLayeredArchitecture,
+        pytestarch_architecture: EvaluableArchitecture,
     ):
         rule = (
             LayerRule()
@@ -87,7 +87,7 @@ class TestArchitecture:
         rule.assert_applies(pytestarch_architecture)
 
     def test_services_should_only_be_imported_by_app(
-            self, pytestarch_architecture: EvaluableArchitecture
+        self, pytestarch_architecture: EvaluableArchitecture
     ):
         rule = (
             Rule()
@@ -100,7 +100,7 @@ class TestArchitecture:
         rule.assert_applies(pytestarch_architecture)
 
     def test_dtos_should_only_be_imported_by_endpoints_and_mappers(
-            self, pytestarch_architecture: EvaluableArchitecture
+        self, pytestarch_architecture: EvaluableArchitecture
     ):
         rule = (
             Rule()
@@ -113,7 +113,7 @@ class TestArchitecture:
         rule.assert_applies(pytestarch_architecture)
 
     def test_db_should_not_be_imported_by_endpoints(
-            self, pytestarch_architecture: EvaluableArchitecture
+        self, pytestarch_architecture: EvaluableArchitecture
     ):
         rule = (
             Rule()

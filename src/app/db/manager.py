@@ -21,8 +21,9 @@ class Database:
                 bind=self._engine,
             ),
         )
+        self._create_database()
 
-    def create_database(self) -> None:
+    def _create_database(self) -> None:
         Base.metadata.create_all(self._engine)
 
     @contextmanager
@@ -35,5 +36,4 @@ class Database:
             session.rollback()
             raise
         finally:
-            session.close()
             session.close()

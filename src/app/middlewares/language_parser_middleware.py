@@ -8,7 +8,7 @@ from starlette.responses import Response
 class LanguageParserMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         language = request.headers.get("Accept-Language")
-        language_code = 'en'
+        language_code = "en"
         if language:
             language_match = re.search(r"(\w{2})(?:-\w{2})?", language)
             if language_match:
@@ -16,4 +16,4 @@ class LanguageParserMiddleware(BaseHTTPMiddleware):
                 if matched_language == "ar":
                     language_code = "ar"
         request.scope["language"] = language_code
-        return await call_next(request)
+        return await call_next(request)  # type: ignore

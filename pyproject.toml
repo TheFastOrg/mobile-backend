@@ -117,7 +117,7 @@ rm -rf ./**/*.pyc
 
 [tool.poe.tasks.lint]
     [[tool.poe.tasks.lint.sequence]]
-    cmd = "poetry run ruff src tests"
+    cmd = "poetry run ruff src tests --fix"
     [[tool.poe.tasks.lint.sequence]]
     cmd = "poetry run mypy src tests"
 
