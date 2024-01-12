@@ -6,10 +6,9 @@ from sqlalchemy import (
     Time,
 )
 from sqlalchemy.orm import Mapped  # type: ignore
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column
 
 from src.app.db.models.base import Base
-from src.app.db.models.business import Business
 
 
 class BusinessWorkingHours(Base):
@@ -27,9 +26,6 @@ class BusinessWorkingHours(Base):
         Integer,
         ForeignKey("business.id", deferrable=True, initially="DEFERRED"),
         nullable=False,
-    )
-    business: Mapped["Business"] = relationship(
-        "Business", back_populates="business_working_hours"
     )
 
 

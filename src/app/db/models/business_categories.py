@@ -4,10 +4,9 @@ from sqlalchemy import (
     Integer,
 )
 from sqlalchemy.orm import Mapped  # type: ignore
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column
 
 from src.app.db.models.base import Base
-from src.app.db.models.business import Business
 
 
 class BusinessCategories(Base):
@@ -23,10 +22,10 @@ class BusinessCategories(Base):
         ForeignKey("category.id", deferrable=True, initially="DEFERRED"),
         nullable=False,
     )
-
-    business: Mapped["Business"] = relationship(
-        "Business", back_populates="business_categories"
-    )
+    # category: Mapped["Category"] = relationship()
+    # business: Mapped["Business"] = relationship(
+    #     "Business", back_populates="business_categories"
+    # )
     # category: Mapped["mapped_column.mapped_class"] = mapped_column(
     #     mapped_column.class_of_type("Category")
     # )

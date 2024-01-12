@@ -21,9 +21,5 @@ class BusinessTags(Base):
         nullable=False,
     )
 
-    # business: Mapped["mapped_column.mapped_class"] = mapped_column(
-    #     mapped_column.class_of_type("Business")
-    # )
-
 
 Index("business_tags_business_id_index", BusinessTags.business_id)

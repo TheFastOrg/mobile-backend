@@ -1,4 +1,9 @@
-from src.app.dtos.business import SearchBusinessRequest, LocationRequest
+from src.app.dtos.business import (
+    SearchBusinessRequest,
+    LocationRequest,
+    SearchBusinessResponse,
+)
+from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessSearchQuery
 
 
@@ -23,3 +28,9 @@ class BusinessMapper:
             returnQuery.radiusInKM = query.location.radiusInKM
 
         return returnQuery
+
+    @staticmethod
+    def to_search_response(business: Business) -> SearchBusinessResponse:
+        return SearchBusinessResponse(
+            id=business.business_id.value, name=business.names.default_name()
+        )

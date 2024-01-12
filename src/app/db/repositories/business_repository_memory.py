@@ -41,6 +41,5 @@ class InMemoryBusinessRepository(BusinessRepository):
     def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return self._data.get(business_id)
 
-    def get_all(self, query: BusinessSearchQuery) -> Iterator[Business]:
-        for business in self._data.values():
-            yield business
+    def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
+        return len(self._data), iter(self._data.values())

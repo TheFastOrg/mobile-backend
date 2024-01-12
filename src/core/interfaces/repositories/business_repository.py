@@ -8,7 +8,7 @@ from src.core.entities.business.value_types import BusinessId
 
 class BusinessRepository(ABC):
     @abstractmethod
-    def get_all(self, query: BusinessSearchQuery) -> Iterator[Business]:
+    def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
         raise NotImplementedError
 
     @abstractmethod

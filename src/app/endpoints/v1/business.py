@@ -1,20 +1,23 @@
 """Endpoints module."""
 
-from typing import Annotated
+from typing import List
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, Response, status, Header
+from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
 from src.app.configurator.containers import Container
-from src.app.dtos.business import SearchBusinessRequest
-from src.core.entities.business.enums import BusinessStatus, Day
+from src.app.dtos.business import SearchBusinessRequest, SearchBusinessResponse
+from src.app.dtos.core import PaginationJSONResponse
 from src.core.services.business_service import BusinessService
 from src.app.mappers.business import BusinessMapper
 
 businessRouter = APIRouter(prefix="/v1/businesses", tags=["Business"])
 
 
-@businessRouter.post("/search")
+@businessRouter.post(
+    "/search",
+    response_model=List[SearchBusinessResponse],
+)
 @inject
 async def search(
     request: Request,
@@ -24,5 +27,8 @@ async def search(
     core_query = BusinessMapper.to_core_query(query)
     language = request.scope.get("language", "en")
     core_query.language = language
-    business = service.search(core_query)
-    return business
+    total_count, businesses = service.search(core_query)
+    result = [BusinessMapper.to_search_response(item) for item in businesses]
+    return PaginationJSONResponse(
+        total_count, query.page_number, query.page_size, result
+    )

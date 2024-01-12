@@ -41,3 +41,8 @@ class SearchBusinessRequest(BasePaginationRequest):
         if values.get("name") is None and values.get("categoryName") is None:
             raise ValueError("Name or categoryName should be present")
         return values
+
+
+class SearchBusinessResponse(BaseDTO):
+    id: str
+    name: str

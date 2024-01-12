@@ -13,7 +13,7 @@ class BusinessService:
     def __init__(self, business_repository: BusinessRepository):
         self.business_repository = business_repository
 
-    def search(self, query: BusinessSearchQuery) -> Iterator[Business]:
+    def search(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
         return self.business_repository.get_all(query)
 
     def get_by_id(self, business_id: BusinessId) -> Optional[Business]:

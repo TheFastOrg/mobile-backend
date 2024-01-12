@@ -2,10 +2,15 @@ import datetime
 from contextlib import AbstractContextManager
 from typing import Callable, Iterator, Optional
 from geoalchemy2.shape import to_shape
+from sqlalchemy import select, and_, func
 from sqlalchemy.orm import Session
 from src.app.db.models.business import Business as DBBusiness
+from src.app.db.models.business_tags import BusinessTags
+from src.app.db.models.business_working_hours import BusinessWorkingHours
+from src.app.db.models.category import Category
+from src.app.db.models.feature import Feature
 from src.core.entities.business.business import Business as Business
-from src.core.entities.business.enums import BusinessType, Day
+from src.core.entities.business.enums import BusinessType, BusinessStatus
 from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
     Address,
@@ -25,64 +30,94 @@ class DBBusinessRepository(BusinessRepository):
     def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return None
 
-    def get_all(self, query: BusinessSearchQuery) -> Iterator[Business]:
+    def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
+        db_query = select(DBBusiness).where(
+            DBBusiness.status.in_(
+                [BusinessStatus.CLAIMED.value, BusinessStatus.VERIFIED.value]
+            )
+        )
+
+        if query.type:
+            db_query = db_query.where(DBBusiness.type == query.type.value)
+
+        if query.name:
+            name_to_search = "%{}%".format(query.name)
+            if query.language == "ar":
+                db_query = db_query.where(DBBusiness.ar_name.like(name_to_search))
+            else:
+                db_query = db_query.where(DBBusiness.en_name.ilike(name_to_search))
+
+        if query.openedNow is not None:
+            today = datetime.datetime.now(tz=datetime.timezone.utc)
+            now = today.time()
+            time_filter = (
+                and_(
+                    now >= BusinessWorkingHours.opening_time,
+                    now <= BusinessWorkingHours.closing_time,
+                )
+                if query.openedNow
+                else and_(
+                    now < BusinessWorkingHours.opening_time,
+                    now > BusinessWorkingHours.closing_time,
+                )
+            )
+            day = today.isoweekday()
+            db_query = db_query.where(
+                DBBusiness.working_hours.any(
+                    and_(BusinessWorkingHours.day == day, time_filter)
+                )
+            )
+        if query.categoryName:
+            category_to_search = "%{}%".format(query.categoryName)
+            category_name_filter = (
+                Category.ar_name.like(category_to_search)
+                if query.language == "ar"
+                else Category.en_name.ilike(category_to_search)
+            )
+
+            db_query = db_query.where(DBBusiness.categories.any(category_name_filter))
+        if query.categories:
+            db_query = db_query.where(
+                DBBusiness.categories.any(Category.id.in_(query.categories))
+            )
+        if query.tags:
+            db_query = db_query.where(
+                DBBusiness.tags.any(BusinessTags.tag.in_(query.tags))
+            )
+        if query.features:
+            db_query = db_query.where(
+                DBBusiness.features.any(Feature.id.in_(query.features))
+            )
+
+        # TODO implement location filter
+
         with self.session_factory() as session:
-            db_query = session.query(DBBusiness)
-            if query.type:
-                db_query = db_query.filter(DBBusiness.type == query.type)
+            total_count = session.execute(
+                select(func.count()).select_from(db_query.subquery())
+            ).scalar()
+            total_count = total_count if total_count else 0
 
-            if query.name:
-                if query.language == "ar":
-                    db_query = db_query.filter(DBBusiness.ar_name == query.name)
-                else:
-                    db_query = db_query.filter(DBBusiness.en_name == query.name)
+        # TODO implement sorting
+        db_query = db_query.order_by(DBBusiness.created_at.desc())
 
-            if query.openedNow:
-                today = datetime.datetime.now()
-                day = Day(today.isoweekday())
-                now = today.now().time()
-                #TODO obay, plase check this in the real db
-                db_query = db_query.filter(
-                        DBBusiness.business_working_hours.any(
-                            day=day, opening_time__gte=now, closing_time__lte=now
-                        )
-                    )
-            # if query.categoryName:
-            #     db_query = db_query.filter(
-            #         DBBusiness.categories.any(=query.day_filter)
-            #     )
-            # if query.day_filter:
-            #     db_query = db_query.filter(
-            #         DBBusiness.business_working_hours.any(day=query.day_filter)
-            #     )
-            # if query.max_closing_time:
-            #     db_query = db_query.filter(
-            #         DBBusiness.business_working_hours.any(
-            #             BusinessWorkingHours.closing_time <= query.max_closing_time
-            #         )
-            #     )
-            # if query.min_opening_time:
-            #     db_query = db_query.filter(
-            #         DBBusiness.business_working_hours.any(
-            #             BusinessWorkingHours.opening_time >= query.min_opening_time
-            #         )
-            #     )
-            if query.page_size:
-                db_query = db_query.limit(query.page_size)
+        if query.page_size:
+            db_query = db_query.limit(query.page_size)
 
-            if query.page_number and query.page_size:
-                offset = query.page_number * query.page_size
-                db_query = db_query.offset(offset).limit(query.page_size)
+        if query.page_number and query.page_size:
+            offset = (query.page_number - 1) * query.page_size
+            db_query = db_query.offset(offset).limit(query.page_size)
 
-            results = db_query.all()
+        with self.session_factory() as session:
+            db_results = session.scalars(db_query).all()
+        items = iter([self.from_db_to_business(item) for item in db_results])
 
-            return iter([self.from_db_to_business(item) for item in results])
+        return total_count, items
 
     @staticmethod
     def from_db_to_business(db_business: DBBusiness) -> Business:
         point = to_shape(db_business.location)  # type: ignore
         return Business(
-            business_id=BusinessId(""),
+            business_id=BusinessId(db_business.id.__str__()),
             names=MultilingualName(db_business.ar_name, db_business.en_name),
             address=Address(
                 db_business.country,
