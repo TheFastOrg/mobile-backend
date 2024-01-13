@@ -8,13 +8,16 @@ from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
 from src.core.entities.business.enums import BusinessType
 
 
-class LocationRequest(BaseDTO):
+class LocationModel(BaseDTO):
     latitude: float = Field(...)
     longitude: float = Field(...)
+
+
+class SearchBusinessLocationModel(LocationModel):
     radiusInKM: float = Field(..., description="Radius in KM")
 
 
-class SearchBusinessSortOptions(Enum):
+class SearchBusinessSortModel(Enum):
     RATING = "rating"
     DISTANCE = "distance"
 
@@ -30,11 +33,9 @@ class SearchBusinessRequest(BasePaginationRequest):
     features: Optional[List[str]] = Field(
         default=None, description="List of feature ids"
     )
-    location: Optional[LocationRequest] = Field(default=None)
+    location: Optional[SearchBusinessLocationModel] = Field(default=None)
     openedNow: Optional[bool] = Field(default=None)
-    sortBy: SearchBusinessSortOptions = Field(
-        default=SearchBusinessSortOptions.DISTANCE
-    )
+    sortBy: SearchBusinessSortModel = Field(default=SearchBusinessSortModel.DISTANCE)
 
     @pydantic.model_validator(mode="before")
     def validate_name_or_category_name_should_be_present(cls, values: Dict):
@@ -46,3 +47,5 @@ class SearchBusinessRequest(BasePaginationRequest):
 class SearchBusinessResponse(BaseDTO):
     id: str
     name: str
+    number_of_reviews: int
+    location: LocationModel

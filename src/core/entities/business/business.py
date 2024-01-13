@@ -25,6 +25,7 @@ class Business:
     address: Optional[Address] = None
     status: BusinessStatus = BusinessStatus.DRAFT
     working_days: List[WorkingDay] = field(default_factory=list)
+    number_of_reviews: int = 0
 
     @classmethod
     def create(

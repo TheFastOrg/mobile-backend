@@ -1,7 +1,8 @@
 from src.app.dtos.business import (
     SearchBusinessRequest,
-    LocationRequest,
     SearchBusinessResponse,
+    SearchBusinessLocationModel,
+    LocationModel,
 )
 from src.core.entities.business.business import Business
 from src.core.entities.business.queries import BusinessSearchQuery
@@ -22,7 +23,7 @@ class BusinessMapper:
             page_number=query.page_number,
         )
 
-        if isinstance(query.location, LocationRequest):
+        if isinstance(query.location, SearchBusinessLocationModel):
             returnQuery.latitude = query.location.latitude
             returnQuery.longitude = query.location.longitude
             returnQuery.radiusInKM = query.location.radiusInKM
@@ -32,5 +33,11 @@ class BusinessMapper:
     @staticmethod
     def to_search_response(business: Business) -> SearchBusinessResponse:
         return SearchBusinessResponse(
-            id=business.business_id.value, name=business.names.default_name()
+            id=business.business_id.value,
+            name=business.names.default_name(),
+            number_of_reviews=business.number_of_reviews,
+            location=LocationModel(
+                latitude=business.location.latitude,
+                longitude=business.location.longitude,
+            ),
         )
