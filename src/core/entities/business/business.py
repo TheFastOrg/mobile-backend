@@ -26,7 +26,8 @@ class Business:
     status: BusinessStatus = BusinessStatus.DRAFT
     working_days: List[WorkingDay] = field(default_factory=list)
     number_of_reviews: int = 0
-
+    overall_rating: float = 0
+    tags: List[str] = field(default_factory=list)
     @classmethod
     def create(
         cls,

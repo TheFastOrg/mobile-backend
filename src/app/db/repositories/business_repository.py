@@ -3,7 +3,7 @@ from contextlib import AbstractContextManager
 from typing import Callable, Iterator, Optional
 from geoalchemy2.shape import to_shape
 from sqlalchemy import select, and_, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from src.app.db.models.business import Business as DBBusiness
 from src.app.db.models.business_tags import BusinessTags
 from src.app.db.models.business_working_hours import BusinessWorkingHours
@@ -23,7 +23,7 @@ from src.core.interfaces.repositories.business_repository import BusinessReposit
 
 class DBBusinessRepository(BusinessRepository):
     def __init__(
-        self, session_factory: Callable[..., AbstractContextManager[Session]]
+            self, session_factory: Callable[..., AbstractContextManager[Session]]
     ) -> None:
         self.session_factory = session_factory
 
@@ -31,11 +31,15 @@ class DBBusinessRepository(BusinessRepository):
         return None
 
     def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
-        db_query = select(DBBusiness).where(
-            DBBusiness.status.in_(
-                [BusinessStatus.CLAIMED.value, BusinessStatus.VERIFIED.value]
-            )
-        )
+        db_query = (
+            select(DBBusiness, BusinessTags)
+            .outerjoin(DBBusiness.tags)
+            .options(selectinload(DBBusiness.tags))
+            .where(
+                DBBusiness.status.in_(
+                    [BusinessStatus.CLAIMED.value, BusinessStatus.VERIFIED.value]
+                )
+            ))
 
         if query.type:
             db_query = db_query.where(DBBusiness.type == query.type.value)
@@ -127,4 +131,5 @@ class DBBusinessRepository(BusinessRepository):
             ),
             location=Location(point.y, point.x),
             type=BusinessType.RESTAURANT,
+            tags=[item.tag for item in db_business.tags]
         )

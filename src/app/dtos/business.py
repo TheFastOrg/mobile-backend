@@ -1,3 +1,4 @@
+from datetime import time
 from enum import Enum
 from typing import List, Optional, Dict
 
@@ -5,12 +6,18 @@ import pydantic
 from pydantic import Field
 
 from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
-from src.core.entities.business.enums import BusinessType
+from src.core.entities.business.enums import BusinessType, Day
 
 
 class LocationModel(BaseDTO):
     latitude: float = Field(...)
     longitude: float = Field(...)
+
+
+class AddressModel(BaseDTO):
+    address_line1: str
+    address_line2: str
+    city: str
 
 
 class SearchBusinessLocationModel(LocationModel):
@@ -44,8 +51,18 @@ class SearchBusinessRequest(BasePaginationRequest):
         return values
 
 
+class WorkingHourModel(BaseDTO):
+    day: Day
+    opening_time: time
+    closing_time: time
+
+
 class SearchBusinessResponse(BaseDTO):
     id: str
     name: str
-    number_of_reviews: int
     location: LocationModel
+    number_of_reviews: int
+    tags: List[str]
+    overall_rating: float
+    address: AddressModel
+    working_hours: List[WorkingHourModel]
