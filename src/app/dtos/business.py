@@ -1,12 +1,11 @@
 from datetime import time
-from enum import Enum
 from typing import List, Optional, Dict
 
 import pydantic
 from pydantic import Field
 
 from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
-from src.core.entities.business.enums import BusinessType, Day
+from src.core.entities.business.enums import BusinessType, Day, BusinessSort
 
 
 class LocationModel(BaseDTO):
@@ -24,11 +23,6 @@ class SearchBusinessLocationModel(LocationModel):
     radiusInKM: Optional[float] = Field(5, description="Radius in KM")
 
 
-class SearchBusinessSortModel(Enum):
-    RATING = "rating"
-    DISTANCE = "distance"
-
-
 class SearchBusinessRequest(BasePaginationRequest):
     type: BusinessType = Field(default=BusinessType.RESTAURANT)
     name: Optional[str] = Field(default=None, min_length=1)
@@ -42,7 +36,7 @@ class SearchBusinessRequest(BasePaginationRequest):
     )
     location: Optional[SearchBusinessLocationModel] = Field(default=None)
     openedNow: Optional[bool] = Field(default=None)
-    sortBy: SearchBusinessSortModel = Field(default=SearchBusinessSortModel.DISTANCE)
+    sortBy: Optional[BusinessSort] = Field(default=None)
 
     @pydantic.model_validator(mode="before")
     def validate_name_or_category_name_should_be_present(cls, values: Dict):

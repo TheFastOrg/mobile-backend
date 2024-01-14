@@ -15,6 +15,7 @@ from src.core.entities.business.enums import (
     BusinessStatus,
     Day,
     SupportedLanguage,
+    BusinessSort,
 )
 from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
@@ -38,10 +39,7 @@ class DBBusinessRepository(BusinessRepository):
 
     def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
         db_query = (
-            select(DBBusiness, DBBusiness.tags, DBBusiness.working_hours)
-            .distinct()
-            .outerjoin(DBBusiness.tags)
-            .outerjoin(DBBusiness.working_hours)
+            select(DBBusiness)
             .options(
                 selectinload(DBBusiness.tags), selectinload(DBBusiness.working_hours)
             )
@@ -103,15 +101,13 @@ class DBBusinessRepository(BusinessRepository):
             db_query = db_query.where(
                 DBBusiness.features.any(Feature.id.in_(query.features))
             )
-
+        location_point = None
         if query.latitude and query.longitude:
+            location_point = func.ST_Point(query.longitude, query.latitude, srid=4326)
             db_query = db_query.where(
                 func.ST_DWithin(
                     DBBusiness.location,
-                    func.ST_SetSRID(
-                        func.ST_MakePoint(query.longitude, query.latitude, srid=4326),
-                        4326,
-                    ),
+                    location_point,
                     query.radius_in_meters(),
                 )
             )
@@ -122,8 +118,16 @@ class DBBusinessRepository(BusinessRepository):
             ).scalar()
             total_count = total_count if total_count else 0
 
-        # TODO implement sorting
-        db_query = db_query.order_by(DBBusiness.created_at.desc())
+        order_by_column = DBBusiness.created_at.desc()
+        if (
+            query.sortBy
+            and query.sortBy == BusinessSort.DISTANCE
+            and location_point is not None
+        ):
+            order_by_column = func.ST_Distance(
+                DBBusiness.location, location_point, srid=4326
+            ).asc()
+        db_query = db_query.order_by(order_by_column)
 
         if query.page_size:
             db_query = db_query.limit(query.page_size)

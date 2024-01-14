@@ -13,7 +13,9 @@ from src.core.entities.business.queries import BusinessSearchQuery
 
 class BusinessMapper:
     @staticmethod
-    def to_core_query(query: SearchBusinessRequest) -> BusinessSearchQuery:
+    def to_core_query(
+        query: SearchBusinessRequest, language: SupportedLanguage
+    ) -> BusinessSearchQuery:
         return_query = BusinessSearchQuery(
             type=query.type,
             name=query.name,
@@ -24,6 +26,8 @@ class BusinessMapper:
             openedNow=query.openedNow,
             page_size=query.page_size,
             page_number=query.page_number,
+            language=language,
+            sortBy=query.sortBy,
         )
 
         if isinstance(query.location, SearchBusinessLocationModel):

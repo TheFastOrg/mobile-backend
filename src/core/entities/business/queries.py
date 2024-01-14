@@ -1,7 +1,11 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
 
-from src.core.entities.business.enums import BusinessType, SupportedLanguage
+from src.core.entities.business.enums import (
+    BusinessType,
+    SupportedLanguage,
+    BusinessSort,
+)
 
 
 class BusinessSearchQuery(BaseModel):
@@ -17,7 +21,7 @@ class BusinessSearchQuery(BaseModel):
     longitude: Optional[float] = Field(default=None)
     radiusInKM: Optional[float] = Field(default=5, description="Radius in KM")
     openedNow: Optional[bool] = Field(default=None)
-    # sortBy: SearchBusinessSortOptions = Field(...)
+    sortBy: Optional[BusinessSort] = Field(default=None)
     page_size: int = 100
     page_number: int = 1
     language: SupportedLanguage = Field(default=SupportedLanguage.EN)

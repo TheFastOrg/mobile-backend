@@ -25,3 +25,7 @@ class BusinessType(Enum):
 class SupportedLanguage(Enum):
     EN = "en"
     AR = "ar"
+
+
+class BusinessSort(Enum):
+    DISTANCE = "distance"

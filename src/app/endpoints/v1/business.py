@@ -26,9 +26,8 @@ async def search(
     query: SearchBusinessRequest,
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
-    core_query = BusinessMapper.to_core_query(query)
     language = language_parser(request)
-    core_query.language = language
+    core_query = BusinessMapper.to_core_query(query, language)
     total_count, businesses = service.search(core_query)
     result = [BusinessMapper.to_search_response(item, language) for item in businesses]
     return PaginationJSONResponse(
