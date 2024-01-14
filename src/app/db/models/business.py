@@ -44,6 +44,3 @@ class Business(Base):
     features: Mapped[List["Feature"]] = relationship(
         "Feature", secondary="business_features"
     )
-    # categories: Mapped[List[Any]] = relationship(
-    #     "BusinessCategory", back_populates="business"
-    # )
