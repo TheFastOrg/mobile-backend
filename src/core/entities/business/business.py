@@ -28,6 +28,7 @@ class Business:
     number_of_reviews: int = 0
     overall_rating: float = 0
     tags: List[str] = field(default_factory=list)
+
     @classmethod
     def create(
         cls,

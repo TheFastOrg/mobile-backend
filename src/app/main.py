@@ -9,8 +9,6 @@ from src.app.endpoints.root import rootRouter
 from src.app.endpoints.v1.business import businessRouter
 from fastapi.middleware.gzip import GZipMiddleware
 
-from src.app.middlewares.language_parser_middleware import LanguageParserMiddleware
-
 
 def create_app() -> FastAPI:
     settings = get_settings()
@@ -31,7 +29,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    fast_api_app.add_middleware(LanguageParserMiddleware)
     fast_api_app.include_router(rootRouter)
     fast_api_app.include_router(businessRouter)
     Container()

@@ -2,9 +2,12 @@ from src.app.dtos.business import (
     SearchBusinessRequest,
     SearchBusinessResponse,
     SearchBusinessLocationModel,
-    LocationModel, AddressModel, WorkingHourModel,
+    LocationModel,
+    AddressModel,
+    WorkingHourModel,
 )
 from src.core.entities.business.business import Business
+from src.core.entities.business.enums import SupportedLanguage
 from src.core.entities.business.queries import BusinessSearchQuery
 
 
@@ -31,26 +34,32 @@ class BusinessMapper:
         return return_query
 
     @staticmethod
-    def to_search_response(business: Business) -> SearchBusinessResponse:
-        return SearchBusinessResponse(
+    def to_search_response(
+        business: Business, language: SupportedLanguage
+    ) -> SearchBusinessResponse:
+        result = SearchBusinessResponse(
             id=business.business_id.value,
-            name=business.names.default_name(),
+            name=business.names.name(language),
             number_of_reviews=business.number_of_reviews,
             overall_rating=business.overall_rating,
             location=LocationModel(
                 latitude=business.location.latitude,
                 longitude=business.location.longitude,
             ),
-            address=AddressModel(
-                city=business.address.city,
-                address_line1=business.address.address_line1,
-                address_line2=business.address.address_line2
-            ),
             tags=business.tags,
             working_hours=[
-                WorkingHourModel(day=item.day,
-                                 opening_time=item.opening_time,
-                                 closing_time=item.closing_time)
-                for item
-                in business.working_days]
+                WorkingHourModel(
+                    day=item.day,
+                    opening_time=item.opening_time,
+                    closing_time=item.closing_time,
+                )
+                for item in business.working_days
+            ],
         )
+        if business.address:
+            result.address = AddressModel(
+                city=business.address.city,
+                address_line1=business.address.address_line1,
+                address_line2=business.address.address_line2,
+            )
+        return result

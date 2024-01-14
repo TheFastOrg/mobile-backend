@@ -21,7 +21,7 @@ class AddressModel(BaseDTO):
 
 
 class SearchBusinessLocationModel(LocationModel):
-    radiusInKM: float = Field(..., description="Radius in KM")
+    radiusInKM: Optional[float] = Field(5, description="Radius in KM")
 
 
 class SearchBusinessSortModel(Enum):
@@ -31,8 +31,8 @@ class SearchBusinessSortModel(Enum):
 
 class SearchBusinessRequest(BasePaginationRequest):
     type: BusinessType = Field(default=BusinessType.RESTAURANT)
-    name: Optional[str] = Field(default=None)
-    categoryName: Optional[str] = Field(default=None)
+    name: Optional[str] = Field(default=None, min_length=1)
+    categoryName: Optional[str] = Field(default=None, min_length=1)
     categories: Optional[List[str]] = Field(
         default=None, description="List of category ids"
     )
@@ -61,8 +61,8 @@ class SearchBusinessResponse(BaseDTO):
     id: str
     name: str
     location: LocationModel
-    number_of_reviews: int
+    number_of_reviews: int = Field(default=0, ge=0)
     tags: List[str]
-    overall_rating: float
-    address: AddressModel
+    overall_rating: float = Field(default=0, ge=0, le=5)
+    address: Optional[AddressModel] = None
     working_hours: List[WorkingHourModel]

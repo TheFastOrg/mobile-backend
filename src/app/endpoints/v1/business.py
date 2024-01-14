@@ -8,6 +8,7 @@ from starlette.requests import Request
 from src.app.configurator.containers import Container
 from src.app.dtos.business import SearchBusinessRequest, SearchBusinessResponse
 from src.app.dtos.core import PaginationJSONResponse
+from src.app.endpoints.utilities import language_parser
 from src.core.services.business_service import BusinessService
 from src.app.mappers.business import BusinessMapper
 
@@ -17,6 +18,7 @@ businessRouter = APIRouter(prefix="/v1/businesses", tags=["Business"])
 @businessRouter.post(
     "/search",
     response_model=List[SearchBusinessResponse],
+    dependencies=[Depends(language_parser)],
 )
 @inject
 async def search(
@@ -25,10 +27,10 @@ async def search(
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
     core_query = BusinessMapper.to_core_query(query)
-    language = request.scope.get("language", "en")
+    language = language_parser(request)
     core_query.language = language
     total_count, businesses = service.search(core_query)
-    result = [BusinessMapper.to_search_response(item) for item in businesses]
+    result = [BusinessMapper.to_search_response(item, language) for item in businesses]
     return PaginationJSONResponse(
         total_count, query.page_number, query.page_size, result
     )

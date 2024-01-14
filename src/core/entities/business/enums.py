@@ -20,3 +20,8 @@ class BusinessStatus(str, Enum):
 
 class BusinessType(Enum):
     RESTAURANT = "restaurant"
+
+
+class SupportedLanguage(Enum):
+    EN = "en"
+    AR = "ar"

@@ -2,7 +2,7 @@ import datetime
 import uuid
 from dataclasses import dataclass, field
 
-from src.core.entities.business.enums import Day
+from src.core.entities.business.enums import Day, SupportedLanguage
 
 
 @dataclass(frozen=True)
@@ -25,11 +25,22 @@ class MultilingualName:
     en_name: str
 
     def default_name(self) -> str:
-        return self.en_name  # You can choose another default language if needed
+        return self.en_name
+
+    def name(self, language: SupportedLanguage) -> str:
+        if language == SupportedLanguage.AR:
+            return self.ar_name
+
+        return self.default_name()
 
 
 @dataclass(frozen=True)
 class WorkingDay:
+    """
+    Attributes:
+        day (int): An integer representing the day of the week (from 1 to 7 where 1 represents Monday).
+    """
+
     day: Day
     opening_time: datetime.time
     closing_time: datetime.time

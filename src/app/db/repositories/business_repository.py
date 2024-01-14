@@ -10,20 +10,26 @@ from src.app.db.models.business_working_hours import BusinessWorkingHours
 from src.app.db.models.category import Category
 from src.app.db.models.feature import Feature
 from src.core.entities.business.business import Business as Business
-from src.core.entities.business.enums import BusinessType, BusinessStatus
+from src.core.entities.business.enums import (
+    BusinessType,
+    BusinessStatus,
+    Day,
+    SupportedLanguage,
+)
 from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
     Address,
     BusinessId,
     Location,
     MultilingualName,
+    WorkingDay,
 )
 from src.core.interfaces.repositories.business_repository import BusinessRepository
 
 
 class DBBusinessRepository(BusinessRepository):
     def __init__(
-            self, session_factory: Callable[..., AbstractContextManager[Session]]
+        self, session_factory: Callable[..., AbstractContextManager[Session]]
     ) -> None:
         self.session_factory = session_factory
 
@@ -32,21 +38,26 @@ class DBBusinessRepository(BusinessRepository):
 
     def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
         db_query = (
-            select(DBBusiness, BusinessTags)
+            select(DBBusiness, DBBusiness.tags, DBBusiness.working_hours)
+            .distinct()
             .outerjoin(DBBusiness.tags)
-            .options(selectinload(DBBusiness.tags))
+            .outerjoin(DBBusiness.working_hours)
+            .options(
+                selectinload(DBBusiness.tags), selectinload(DBBusiness.working_hours)
+            )
             .where(
                 DBBusiness.status.in_(
                     [BusinessStatus.CLAIMED.value, BusinessStatus.VERIFIED.value]
                 )
-            ))
+            )
+        )
 
         if query.type:
             db_query = db_query.where(DBBusiness.type == query.type.value)
 
         if query.name:
             name_to_search = "%{}%".format(query.name)
-            if query.language == "ar":
+            if query.language == SupportedLanguage.AR:
                 db_query = db_query.where(DBBusiness.ar_name.like(name_to_search))
             else:
                 db_query = db_query.where(DBBusiness.en_name.ilike(name_to_search))
@@ -75,7 +86,7 @@ class DBBusinessRepository(BusinessRepository):
             category_to_search = "%{}%".format(query.categoryName)
             category_name_filter = (
                 Category.ar_name.like(category_to_search)
-                if query.language == "ar"
+                if query.language == SupportedLanguage.AR
                 else Category.en_name.ilike(category_to_search)
             )
 
@@ -93,7 +104,17 @@ class DBBusinessRepository(BusinessRepository):
                 DBBusiness.features.any(Feature.id.in_(query.features))
             )
 
-        # TODO implement location filter
+        if query.latitude and query.longitude:
+            db_query = db_query.where(
+                func.ST_DWithin(
+                    DBBusiness.location,
+                    func.ST_SetSRID(
+                        func.ST_MakePoint(query.longitude, query.latitude, srid=4326),
+                        4326,
+                    ),
+                    query.radius_in_meters(),
+                )
+            )
 
         with self.session_factory() as session:
             total_count = session.execute(
@@ -131,5 +152,13 @@ class DBBusinessRepository(BusinessRepository):
             ),
             location=Location(point.y, point.x),
             type=BusinessType.RESTAURANT,
-            tags=[item.tag for item in db_business.tags]
+            tags=[item.tag for item in db_business.tags],
+            working_days=[
+                WorkingDay(
+                    day=Day(item.day),
+                    opening_time=item.opening_time,  # type: ignore
+                    closing_time=item.closing_time,  # type: ignore
+                )
+                for item in db_business.working_hours
+            ],
         )
