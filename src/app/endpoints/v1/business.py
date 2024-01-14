@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
 from src.app.configurator.containers import Container
-from src.app.dtos.business import SearchBusinessRequest, SearchBusinessResponse
+from src.app.dtos.business.search_business_request import SearchBusinessRequest
+from src.app.dtos.business.search_business_response import SearchBusinessResponse
 from src.app.dtos.core import PaginationJSONResponse
 from src.app.endpoints.utilities import language_parser
 from src.core.services.business_service import BusinessService

@@ -22,13 +22,6 @@ class BusinessCategories(Base):
         ForeignKey("category.id", deferrable=True, initially="DEFERRED"),
         nullable=False,
     )
-    # category: Mapped["Category"] = relationship()
-    # business: Mapped["Business"] = relationship(
-    #     "Business", back_populates="business_categories"
-    # )
-    # category: Mapped["mapped_column.mapped_class"] = mapped_column(
-    #     mapped_column.class_of_type("Category")
-    # )
 
 
 Index("business_categories_business_id_index", BusinessCategories.business_id)

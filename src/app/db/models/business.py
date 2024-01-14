@@ -32,9 +32,6 @@ class Business(Base):
     slug: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     status: Mapped[str] = mapped_column(String(255), nullable=False)
     type: Mapped[str] = mapped_column(String(255), nullable=False)
-
-    # using Any to avoid circular import
-    # (alternative: move `BusinessWorkingHours` to `Business.py`)
     working_hours: Mapped[List["BusinessWorkingHours"]] = relationship()
     business_contacts: Mapped[List["BusinessContacts"]] = relationship()
     tags: Mapped[List["BusinessTags"]] = relationship()

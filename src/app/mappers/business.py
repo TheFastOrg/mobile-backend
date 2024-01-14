@@ -1,11 +1,11 @@
-from src.app.dtos.business import (
-    SearchBusinessRequest,
-    SearchBusinessResponse,
+from src.app.dtos.business.address_model import AddressModel
+from src.app.dtos.business.location_model import LocationModel
+from src.app.dtos.business.search_business_location_model import (
     SearchBusinessLocationModel,
-    LocationModel,
-    AddressModel,
-    WorkingHourModel,
 )
+from src.app.dtos.business.search_business_request import SearchBusinessRequest
+from src.app.dtos.business.search_business_response import SearchBusinessResponse
+from src.app.dtos.business.wokring_hour_model import WorkingHourModel
 from src.core.entities.business.business import Business
 from src.core.entities.business.enums import SupportedLanguage
 from src.core.entities.business.queries import BusinessSearchQuery

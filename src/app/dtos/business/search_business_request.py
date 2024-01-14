@@ -1,26 +1,13 @@
-from datetime import time
-from typing import List, Optional, Dict
+from typing import Optional, List, Dict
 
 import pydantic
 from pydantic import Field
 
-from src.app.dtos.base_dto import BaseDTO, BasePaginationRequest
-from src.core.entities.business.enums import BusinessType, Day, BusinessSort
-
-
-class LocationModel(BaseDTO):
-    latitude: float = Field(...)
-    longitude: float = Field(...)
-
-
-class AddressModel(BaseDTO):
-    address_line1: str
-    address_line2: str
-    city: str
-
-
-class SearchBusinessLocationModel(LocationModel):
-    radiusInKM: Optional[float] = Field(5, description="Radius in KM")
+from src.app.dtos.base_dto import BasePaginationRequest
+from src.app.dtos.business.search_business_location_model import (
+    SearchBusinessLocationModel,
+)
+from src.core.entities.business.enums import BusinessType, BusinessSort
 
 
 class SearchBusinessRequest(BasePaginationRequest):
@@ -43,20 +30,3 @@ class SearchBusinessRequest(BasePaginationRequest):
         if values.get("name") is None and values.get("categoryName") is None:
             raise ValueError("Name or categoryName should be present")
         return values
-
-
-class WorkingHourModel(BaseDTO):
-    day: Day
-    opening_time: time
-    closing_time: time
-
-
-class SearchBusinessResponse(BaseDTO):
-    id: str
-    name: str
-    location: LocationModel
-    number_of_reviews: int = Field(default=0, ge=0)
-    tags: List[str]
-    overall_rating: float = Field(default=0, ge=0, le=5)
-    address: Optional[AddressModel] = None
-    working_hours: List[WorkingHourModel]
