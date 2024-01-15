@@ -99,7 +99,7 @@ class TestArchitecture:
         )
         rule.assert_applies(pytestarch_architecture)
 
-    def test_dtos_should_only_be_imported_by_endpoints(
+    def test_dtos_should_only_be_imported_by_endpoints_and_mappers(
         self, pytestarch_architecture: EvaluableArchitecture
     ):
         rule = (
@@ -108,7 +108,7 @@ class TestArchitecture:
             .are_named("src.app.dtos")
             .should_only()
             .be_imported_by_modules_that()
-            .are_named("src.app.endpoints")
+            .are_named(["src.app.endpoints", "src.app.mappers"])
         )
         rule.assert_applies(pytestarch_architecture)
 

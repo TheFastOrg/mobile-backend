@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     )
     API_TITLE: str = "Ba7besh API"
     API_VERSION: str = "1.0"
-    USE_IN_MEMORY_DB: bool = True
+    USE_IN_MEMORY_DB: bool = bool(os.getenv("USE_IN_MEMORY_DB", True))
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: Optional[str] = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")

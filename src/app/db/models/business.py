@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List
 
 from geoalchemy2 import Geography
 from sqlalchemy import (
@@ -9,6 +9,11 @@ from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import mapped_column, relationship
 
 from src.app.db.models.base import Base
+from src.app.db.models.business_contacts import BusinessContacts
+from src.app.db.models.business_tags import BusinessTags
+from src.app.db.models.business_working_hours import BusinessWorkingHours
+from src.app.db.models.category import Category
+from src.app.db.models.feature import Feature
 
 
 class Business(Base):
@@ -27,12 +32,12 @@ class Business(Base):
     slug: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     status: Mapped[str] = mapped_column(String(255), nullable=False)
     type: Mapped[str] = mapped_column(String(255), nullable=False)
-
-    # using Any to avoid circular import
-    # (alternative: move `BusinessWorkingHours` to `Business.py`)
-    business_working_hours: Mapped[List[Any]] = relationship(
-        "BusinessWorkingHours", back_populates="business"
+    working_hours: Mapped[List["BusinessWorkingHours"]] = relationship()
+    business_contacts: Mapped[List["BusinessContacts"]] = relationship()
+    tags: Mapped[List["BusinessTags"]] = relationship()
+    categories: Mapped[List["Category"]] = relationship(
+        "Category", secondary="business_categories"
     )
-
-    def __repr__(self):
-        return f"Business: {self.en_name}"
+    features: Mapped[List["Feature"]] = relationship(
+        "Feature", secondary="business_features"
+    )

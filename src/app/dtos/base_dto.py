@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 from fastapi.encoders import jsonable_encoder
 from humps import camelize
 from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import Field
 
 
 def convert_datetime_to_gmt(dt: datetime) -> str:
@@ -37,3 +38,8 @@ class BaseDTO(BaseModel):
         default_dict = self.model_dump()
 
         return jsonable_encoder(default_dict)
+
+
+class BasePaginationRequest(BaseDTO):
+    page_size: int = Field(default=100)
+    page_number: int = Field(default=1)

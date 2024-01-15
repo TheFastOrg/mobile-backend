@@ -1,33 +1,36 @@
 """Endpoints module."""
 
-from datetime import time
-
+from typing import List
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends
+from starlette.requests import Request
 
 from src.app.configurator.containers import Container
-from src.core.entities.business.enums import BusinessStatus, Day
-from src.core.entities.business.queries import BusinessListQuery
+from src.app.dtos.business.search_business_request import SearchBusinessRequest
+from src.app.dtos.business.search_business_response import SearchBusinessResponse
+from src.app.dtos.core import PaginationJSONResponse
+from src.app.endpoints.utilities import language_parser
 from src.core.services.business_service import BusinessService
+from src.app.mappers.business import BusinessMapper
 
 businessRouter = APIRouter(prefix="/v1/businesses", tags=["Business"])
 
 
-@businessRouter.post("/search")
+@businessRouter.post(
+    "/search",
+    response_model=List[SearchBusinessResponse],
+    dependencies=[Depends(language_parser)],
+)
 @inject
 async def search(
+    request: Request,
+    query: SearchBusinessRequest,
     service: BusinessService = Depends(Provide[Container.business_service]),
 ):
-    query = BusinessListQuery(
-        day_filter=Day.MONDAY,
-        status=BusinessStatus.DRAFT,
-        min_opening_time=time(10, 0, 0),
-        max_closing_time=time(23, 59, 59),
-        page_size=10,
-        page_number=2,
-    )
-    business = service.get_all(query)
-    print("Database connectivity test successful:", list(business))
-    return Response(
-        content="Hey, ba7besh started here!", status_code=status.HTTP_200_OK
+    language = language_parser(request)
+    core_query = BusinessMapper.to_core_query(query, language)
+    total_count, businesses = service.search(core_query)
+    result = [BusinessMapper.to_search_response(item, language) for item in businesses]
+    return PaginationJSONResponse(
+        total_count, query.page_number, query.page_size, result
     )

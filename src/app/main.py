@@ -12,10 +12,6 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    container = Container()
-    if not settings.USE_IN_MEMORY_DB:
-        db = container.db()
-        db.create_database()
     fast_api_app = FastAPI(
         title=settings.API_TITLE,
         version=settings.API_VERSION,
@@ -35,6 +31,7 @@ def create_app() -> FastAPI:
     )
     fast_api_app.include_router(rootRouter)
     fast_api_app.include_router(businessRouter)
+    Container()
     return fast_api_app
 
 

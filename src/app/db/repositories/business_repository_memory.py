@@ -1,7 +1,7 @@
 from typing import Dict, Iterator, Optional
 
 from src.core.entities.business.business import Business
-from src.core.entities.business.queries import BusinessListQuery
+from src.core.entities.business.queries import BusinessSearchQuery
 from src.core.entities.business.value_types import (
     BusinessId,
     Location,
@@ -23,6 +23,14 @@ class InMemoryBusinessRepository(BusinessRepository):
                 location=Location(33.507780, 36.285530),
             )
         )
+        self.save(
+            Business.create(
+                names=MultilingualName(
+                    en_name="co-worker restaurant2", ar_name="مطعم كووركر2"
+                ),
+                location=Location(33.507780, 36.285530),
+            )
+        )
 
     def save(self, business: Business) -> Business:
         if not business.business_id:
@@ -33,6 +41,5 @@ class InMemoryBusinessRepository(BusinessRepository):
     def get_by_id(self, business_id: BusinessId) -> Optional[Business]:
         return self._data.get(business_id)
 
-    def get_all(self, query: BusinessListQuery) -> Iterator[Business]:
-        for business in self._data.values():
-            yield business
+    def get_all(self, query: BusinessSearchQuery) -> tuple[int, Iterator[Business]]:
+        return len(self._data), iter(self._data.values())
