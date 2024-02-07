@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_ENV: Literal["dev", "staging", "prod"] = "dev"
+    APP_ENV: Literal["dev", "staging", "prod", "local"] = "dev"
     API_DESCRIPTION: str = (
         "Ba7besh Back-End API for the mobile app,"
         + "it will be used privately by the ba7besh mobile "
@@ -21,7 +21,9 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ba7besh")
-    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    DATABASE_URL: PostgresDsn | str = (
+        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    )
 
     @staticmethod
     def _configure_initial_settings() -> Callable[[], "Settings"]:
