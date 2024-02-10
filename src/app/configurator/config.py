@@ -17,13 +17,12 @@ class Settings(BaseSettings):
     API_VERSION: str = "1.0"
     USE_IN_MEMORY_DB: bool = bool(os.getenv("USE_IN_MEMORY_DB", True))
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD: Optional[str] = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_PASSWORD: Optional[str] = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_HOST: str = os.getenv("POSTGRES_HOST", "localhost")
     POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "ba7besh")
-    DATABASE_URL: PostgresDsn | str = (
-        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-    )
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "postgres")
+    POSTGRES_SCHEMA: str = os.getenv("POSTGRES_SCHEMA", "public")
+    DATABASE_URL: PostgresDsn | str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}?options=-csearch_path={POSTGRES_SCHEMA}"
 
     @staticmethod
     def _configure_initial_settings() -> Callable[[], "Settings"]:

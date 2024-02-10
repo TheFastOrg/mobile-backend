@@ -1,7 +1,7 @@
+import importlib
 import os
 import sys
 from logging.config import fileConfig
-
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
@@ -11,7 +11,6 @@ from alembic import context
 
 settings = get_settings()
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 sys.path.append(BASE_DIR)
@@ -20,7 +19,7 @@ sys.path.append(BASE_DIR)
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL.__str__())
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -33,8 +32,24 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
+# Assuming your models are in the "models" directory
+models_dir = os.path.join(BASE_DIR, "app", "db", "models")
+# Get a list of all Python files in the models directory
+module_files = [
+    file[:-3]
+    for file in os.listdir(models_dir)
+    if file.endswith(".py") and file not in ["__init__.py", "base.py"]
+]
+
+# Dynamically import classes from modules
+for module_name in module_files:
+    # Construct the full module path
+    full_module_path = f"src.app.db.models.{module_name}"
+    # Import the module
+    module = importlib.import_module(full_module_path)
 
 target_metadata = Base.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -42,11 +57,10 @@ target_metadata = Base.metadata
 # ... etc.
 
 
-def include_object(object, name, type_, reflected, compare_to):
-    if type_ == "table" and object.schema in ["public"]:
-        return True
-
-    return False
+def include_name(name, type_, parent_names):
+    if name == "spatial_ref_sys":
+        return False
+    return True
 
 
 def run_migrations_offline() -> None:
@@ -67,8 +81,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        include_object=include_object,
-        include_schemas=True,
+        include_name=include_name,
     )
 
     with context.begin_transaction():
@@ -92,8 +105,7 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            include_object=include_object,
-            include_schemas=True,
+            include_name=include_name,
         )
 
         with context.begin_transaction():
