@@ -8,8 +8,7 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "src"}, {include = "tests"}]
-
+packages = [{ include = "src" }, { include = "tests" }]
 
 
 [tool.poetry.dependencies]
@@ -59,9 +58,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-filterwarnings = [
-    'ignore:The `__fields__` attribute is deprecated',
-]
+filterwarnings = ['ignore:The `__fields__` attribute is deprecated']
 
 [tool.pytest]
 addopts = "--cov=src --cov-report html tests/"
@@ -88,7 +85,7 @@ exclude_also = [
 
     # Don't complain about abstract methods, they aren't run:
     "@(abc\\.)?abstractmethod",
-    ]
+]
 
 [tool.ruff]
 exclude = ['.venv', 'src/alembic']
@@ -99,10 +96,10 @@ poetry_command = ""
 
 
 [tool.poe.tasks.setup]
-    [[tool.poe.tasks.setup.sequence]]
-    cmd = "poetry install"
-    [[tool.poe.tasks.setup.sequence]]
-    cmd = "poetry run pre-commit install"
+[[tool.poe.tasks.setup.sequence]]
+cmd = "poetry install"
+[[tool.poe.tasks.setup.sequence]]
+cmd = "poetry run pre-commit install"
 
 [tool.poe.tasks]
 doc = "poetry run poe"
@@ -116,20 +113,24 @@ rm -rf ./**/*.pyc
 """
 
 [tool.poe.tasks.lint]
-    [[tool.poe.tasks.lint.sequence]]
-    cmd = "poetry run ruff src tests --fix"
-    [[tool.poe.tasks.lint.sequence]]
-    cmd = "poetry run mypy src tests"
+[[tool.poe.tasks.lint.sequence]]
+cmd = "poetry run ruff src tests --fix"
+[[tool.poe.tasks.lint.sequence]]
+cmd = "poetry run mypy src tests"
 
 [tool.poe.tasks.format]
-    [[tool.poe.tasks.format.sequence]]
-    cmd = "poetry run autopep8 src tests"
-    [[tool.poe.tasks.format.sequence]]
-    cmd = "poetry run ruff format src tests"
-
+[[tool.poe.tasks.format.sequence]]
+cmd = "poetry run autopep8 src tests"
+[[tool.poe.tasks.format.sequence]]
+cmd = "poetry run ruff format src tests"
 
 
 [tool.poe.tasks.generate-migration]
-cmd= "poetry run alembic revision --autogenerate"
-help= "Generate migration script based on comparison of database to model"
-args = [{ name = "message", options = ["-m", "--message"], help = "Message string to use for the migration file" }]
+cmd = "poetry run alembic revision --autogenerate"
+help = "Generate migration script based on comparison of database to model"
+args = [
+    { name = "message", options = [
+        "-m",
+        "--message",
+    ], help = "Message string to use for the migration file" },
+]
