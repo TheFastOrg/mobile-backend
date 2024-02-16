@@ -1,8 +1,9 @@
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 from typing import List
 
 from geoalchemy2 import Geography
 from sqlalchemy import (
-    Integer,
     String,
 )
 from sqlalchemy.orm import Mapped  # type: ignore
@@ -19,7 +20,7 @@ from src.app.db.models.feature import Feature
 class Business(Base):
     __tablename__ = "business"
 
-    id: Mapped[Integer] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     location: Mapped[Geography] = mapped_column(
         Geography(geometry_type="POINT", srid=4326), nullable=False
     )
