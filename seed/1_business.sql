@@ -50,5 +50,4 @@ VALUES
         NULL,
         NULL,
         false
-    ),
-;
+    );
