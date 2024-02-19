@@ -1,11 +1,8 @@
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
 from typing import List
 
 from geoalchemy2 import Geography
-from sqlalchemy import (
-    String,
-)
+from sqlalchemy import String, UUID
 from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import mapped_column, relationship
 

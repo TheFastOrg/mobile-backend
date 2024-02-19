@@ -1,9 +1,5 @@
 import uuid
-from sqlalchemy import (
-    ForeignKey,
-    Index,
-)
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey, Index, UUID
 from sqlalchemy.orm import mapped_column
 
 from src.app.db.models.base import Base

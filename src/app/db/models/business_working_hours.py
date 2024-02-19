@@ -1,12 +1,5 @@
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import (
-    CheckConstraint,
-    ForeignKey,
-    Index,
-    Integer,
-    Time,
-)
+from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, Time, UUID
 from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import mapped_column
 

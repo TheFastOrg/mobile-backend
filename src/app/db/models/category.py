@@ -1,10 +1,6 @@
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
 
-from sqlalchemy import (
-    ForeignKey,
-    String,
-)
+from sqlalchemy import ForeignKey, String, UUID
 from sqlalchemy.orm import Mapped  # type: ignore
 from sqlalchemy.orm import mapped_column
 
