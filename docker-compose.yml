@@ -3,7 +3,9 @@ version: '3'
 
 services:
   postgres:
-    image: postgis/postgis:14-3.4
+    build:
+     context: ./postgres
+     dockerfile: Dockerfile
     ports:
       - 5432:5432
     environment:
@@ -12,7 +14,7 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   fastapi:
     build:
       context: .
@@ -28,7 +30,7 @@ services:
       POSTGRES_HOST: postgres # this is the name of the service in the docker-compose.yml
     depends_on:
       - postgres
-    
+
 
 
 volumes:

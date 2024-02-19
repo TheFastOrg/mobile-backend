@@ -230,6 +230,5 @@ fabric.properties
 .ruff_cache
 
 .envrc.*
-seed/
 
 .metals/
